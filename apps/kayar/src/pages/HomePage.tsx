@@ -21,7 +21,7 @@ export default function HomePage() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {modules.map((m, i) => (
           <motion.div key={m.to} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.07 }}>
-            <Link to={m.to} className="glass group block h-full rounded-2xl p-4 transition hover:border-primary/40 md:p-5">
+            <Link to={m.to} className="glass border-gradient group block h-full rounded-2xl p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_hsl(var(--primary)/0.5)] md:p-5">
               <div className={`mb-4 grid h-12 w-12 place-items-center rounded-2xl ${m.tone}`}><m.icon className="h-6 w-6" /></div>
               <div className="text-lg font-extrabold">{m.title}</div>
               <div className="mt-1 text-xs text-muted-foreground md:text-sm">{m.text}</div>
@@ -54,7 +54,7 @@ function Hero({ coaches, audio }: { coaches: number; audio: number }) {
     <section className="grid items-center gap-6 md:grid-cols-2 md:gap-10">
       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="order-2 md:order-1">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs text-primary"><Sparkles className="h-3.5 w-3.5" /> همراه ورزشی و سلامت تو</div>
-        <h1 className="text-4xl font-black leading-[1.25] md:text-6xl">تو فقط یک لباس نخریدی؛<br /><span className="text-primary glow-text">تو یه همراه داری</span></h1>
+        <h1 className="text-4xl font-black leading-[1.25] md:text-6xl">تو فقط یک لباس نخریدی؛<br /><span className="text-gradient">تو یه همراه داری</span></h1>
         <p className="mt-4 max-w-md text-muted-foreground">کایار، همراه ورزشی و سلامتی تو: با ابزارهای هوشمند، مربیان حرفه‌ای و محتوای اختصاصی.</p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="rounded-full px-8 font-bold glow"><Link to="/bodyyar">برنامه‌ام رو بساز</Link></Button>

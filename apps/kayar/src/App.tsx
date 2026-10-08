@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import LandingPage from './pages/LandingPage';
+import WelcomePage from './pages/WelcomePage';
+import MobileApp from './mobile/MobileApp';
 import HomePage from './pages/HomePage';
 import CoachesPage from './pages/CoachesPage';
 import CoachDetailPage from './pages/CoachDetailPage';
@@ -13,8 +16,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/app/*" element={<MobileApp />} />
         <Route element={<Layout />}>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/coaches" element={<CoachesPage />} />
           <Route path="/coaches/:id" element={<CoachDetailPage />} />
           <Route path="/bodyyar" element={<BodyYarPage />} />
