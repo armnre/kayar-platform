@@ -20,7 +20,9 @@ import Activation from './screens/Activation';
 import BodyWizard from './screens/BodyWizard';
 import Analysis from './screens/Analysis';
 import BodyChat from './screens/BodyChat';
-import Explore from './screens/Explore';
+import MorshedScreen from './screens/MorshedScreen';
+import CoachesScreen from './screens/CoachesScreen';
+import CoachDetail from './screens/CoachDetail';
 
 function Guard({ children }: { children: JSX.Element }) {
   const s = useSession();
@@ -57,8 +59,9 @@ export default function MobileApp() {
                 <Route path="home" element={<Guard><Dashboard /></Guard>} />
                 <Route path="profile" element={<Guard><Profile /></Guard>} />
                 <Route path="notifications" element={<Guard><Notifications /></Guard>} />
-                <Route path="morshed" element={<Guard><Explore kind="morshed" /></Guard>} />
-                <Route path="coaches" element={<Guard><Explore kind="coaches" /></Guard>} />
+                <Route path="morshed" element={<Guard><MorshedScreen /></Guard>} />
+                <Route path="coaches" element={<Guard><CoachesScreen /></Guard>} />
+                <Route path="coaches/:id" element={<Guard><CoachDetail /></Guard>} />
                 <Route path="bodyyar" element={<Guard><BodyYarEntry /></Guard>} />
                 <Route path="bodyyar/scan" element={<Guard><QrScan /></Guard>} />
                 <Route path="bodyyar/activate" element={<Guard><Activation /></Guard>} />

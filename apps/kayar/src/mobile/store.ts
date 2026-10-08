@@ -13,6 +13,7 @@ export type MSession = {
   body?: { height: number; weight: number; age: number; gender: 'male' | 'female'; level: string; goal: string };
   chat?: { role: 'user' | 'assistant'; text: string; at: number }[];
   readNotifs?: string[];
+  liked?: string[];
 };
 
 const KEY = 'kayar.mobile.v1';
