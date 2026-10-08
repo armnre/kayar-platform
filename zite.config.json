@@ -1,0 +1,12 @@
+{
+  "project": {
+    "name": "Kayar Platform",
+    "basePublicIdentifier": "904c868c629fb89a"
+  },
+  "integrations": {
+    "github": {
+      "type": "github",
+      "connectionId": "svc_559280"
+    }
+  }
+}
