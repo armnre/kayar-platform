@@ -25,7 +25,7 @@ export default function CoachDashboard() {
       <div className="grid grid-cols-2 gap-3">
         {stats.map((x) => (
           <div key={x.l} className="rounded-2xl border border-white/10 bg-card/80 p-4">
-            <x.i className="h-5 w-5 text-accent" />
+            <x.i className="h-5 w-5 text-primary" />
             <div className="mt-2 text-2xl font-black">{typeof x.v === 'number' ? toFa(x.v) : x.v}</div>
             <div className="text-xs text-muted-foreground">{x.l}</div>
           </div>
@@ -37,7 +37,7 @@ export default function CoachDashboard() {
           {REQUESTS.map((r) => (
             <div key={r.n} className="flex items-center justify-between rounded-2xl border border-white/10 bg-card/80 p-4 text-sm">
               <div><div className="font-bold">{r.n}</div><div className="text-xs text-muted-foreground">{r.t}</div></div>
-              <span className="text-xs text-accent">{r.at}</span>
+              <span className="text-xs text-primary">{r.at}</span>
             </div>
           ))}
         </div>

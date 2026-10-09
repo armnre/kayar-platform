@@ -42,7 +42,7 @@ export default function MorshedScreen() {
   const dur = cur?.durationSeconds || el.current?.duration || 1;
 
   return (
-    <Screen title="مرشد" right={<Headphones className="h-6 w-6 text-accent" />}>
+    <Screen title={<span>مرشد<span className="block text-xs font-medium text-muted-foreground">پادکست و موزیک برای نسخه بهتر تو</span></span>} right={<span className="grid h-11 w-11 place-items-center rounded-full bg-primary/15 text-primary"><Headphones className="h-5 w-5" /></span>}>
       <div className="mb-4 flex h-12 items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 focus-within:border-primary">
         <Search className="h-4 w-4 text-muted-foreground" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جستجو در مرشد…" className="flex-1 bg-transparent text-sm outline-none" />
       </div>
@@ -54,6 +54,27 @@ export default function MorshedScreen() {
           </button>
         ))}
       </div>
+
+      {!cur && !q && tab !== 'liked' && (() => {
+        const f = (data?.audio ?? []).find((a) => a.featured) ?? data?.audio[0];
+        if (!f) return null;
+        return (
+          <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} onClick={() => play(f)}
+            className="grain relative mb-6 block h-48 w-full overflow-hidden rounded-[2rem] border border-white/10 text-right">
+            <img src="https://images.fillout.com/886978/vxifokrwnr/generated-images/cbdB6kJHZ9StPpLHYzZmd8/img_tqRVkqrDXZUKNjNp.jpg" alt="" className="absolute inset-0 h-full w-full object-cover object-left" />
+            <div className="absolute inset-0 bg-gradient-to-l from-black via-black/70 to-transparent" />
+            <div className="absolute inset-y-0 right-0 flex w-2/3 flex-col justify-center gap-2 p-5">
+              <span className="w-fit rounded-full bg-primary/20 px-2.5 py-1 text-[10px] font-black text-primary backdrop-blur">پیشنهاد امروز</span>
+              <div className="line-clamp-2 text-lg font-black leading-7 text-white">{f.title}</div>
+              <div className="text-[11px] text-white/60">{f.author || f.category} · {mm(f.durationSeconds)}</div>
+            </div>
+            <span className="absolute bottom-5 left-5 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_30px_hsl(var(--primary)/0.7)]"><Play className="h-6 w-6" fill="currentColor" /></span>
+            <div className="absolute bottom-6 left-24 flex h-6 items-end gap-0.5">
+              {[0, 1, 2, 3, 4].map((i) => <motion.span key={i} className="w-1 rounded-full bg-primary" animate={{ height: [6, 22, 10, 18, 6] }} transition={{ duration: 1.2, delay: i * 0.12, repeat: Infinity }} />)}
+            </div>
+          </motion.button>
+        );
+      })()}
 
       {cur && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-5 rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/15 to-card p-4">

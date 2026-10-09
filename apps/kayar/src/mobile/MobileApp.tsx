@@ -68,7 +68,7 @@ export default function MobileApp() {
     <div dir="rtl" className="min-h-[100dvh] bg-[#050505] md:grid md:place-items-center md:py-8">
       <div className="relative mx-auto flex h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden bg-background md:h-[min(860px,calc(100dvh-4rem))] md:rounded-[2.75rem] md:border md:border-white/10 md:shadow-[0_40px_120px_-30px_hsl(var(--primary)/0.25)]">
         <div className="pointer-events-none absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-[100px]" />
-        <div id="app-scroll" className={`relative min-h-0 flex-1 overscroll-contain overflow-y-auto [-webkit-overflow-scrolling:touch] overflow-x-hidden ${showNav ? 'pb-[calc(7.5rem+env(safe-area-inset-bottom))]' : 'pb-[env(safe-area-inset-bottom)]'}`}>
+        <div id="app-scroll" className={`no-scrollbar relative min-h-0 flex-1 overscroll-contain overflow-y-auto [-webkit-overflow-scrolling:touch] overflow-x-hidden ${showNav ? 'pb-[calc(7.5rem+env(safe-area-inset-bottom))]' : 'pb-[env(safe-area-inset-bottom)]'}`}>
           {!online ? <Offline onRetry={() => setOnline(navigator.onLine)} /> : (
             <AnimatePresence mode="wait">
               <Routes location={loc} key={loc.pathname}>

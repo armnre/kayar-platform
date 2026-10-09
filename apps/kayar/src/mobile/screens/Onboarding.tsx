@@ -7,7 +7,7 @@ import { Lime } from '../kit';
 
 const slides = [
   { img: 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/ehiCe6mR6VKtYGiUcxJA6q/img_XqWVTvQkpFraQZTO.jpg', title: 'بدن قوی‌تر، ذهن آرام‌تر', text: 'کایار همراه هوشمند تو برای تمرین، تغذیه، انگیزه و رشد فردی.', icons: [Dumbbell, Brain, AudioLines] },
-  { img: 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/pn6SgYk3HaG93vLJHa9EXA/img_vvnAcROtXE2J1mi_.jpg', title: 'بهتر از دیروز', text: 'با برنامه‌های حرفه‌ای، مربیان مجرب و محتوای اختصاصی، هر روز به نسخه بهتر خودت برس.', icons: [Footprints, Music, Watch] },
+  { img: 'https://images.fillout.com/886978/vxifokrwnr/generated-images/cbdB6kJHZ9StPpLHYzZmd8/img_tqRVkqrDXZUKNjNp.jpg', title: 'بهتر از دیروز', text: 'با برنامه‌های حرفه‌ای، مربیان مجرب و محتوای اختصاصی، هر روز به نسخه بهتر خودت برس.', icons: [Footprints, Music, Watch] },
   { img: 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/teRZy9FtA6SAmLQ8Z5BY6e/img_y_vNAiVjDxgXvYxI.jpg', title: 'بازی کن، جایزه بگیر', text: 'با انجام چالش‌ها و مأموریت‌ها امتیاز جمع کن و جوایز جذاب بگیر.', icons: [Dumbbell, Trophy, Gamepad2] },
 ];
 const pos = ['right-2 top-16', 'left-auto right-8 bottom-28', 'right-24 top-6'];
@@ -19,12 +19,22 @@ export default function Onboarding() {
   const s = slides[i];
   return (
     <div className="relative flex min-h-[100svh] flex-col md:min-h-[860px]">
+      <div className="flex items-center gap-3 px-6 pt-5">
+        <div className="flex flex-1 gap-1.5">
+          {slides.map((_, k) => (
+            <span key={k} className="h-1 flex-1 overflow-hidden rounded-full bg-white/15">
+              <motion.span className="block h-full bg-primary" initial={false} animate={{ width: k <= i ? '100%' : '0%' }} transition={{ duration: 0.5 }} />
+            </span>
+          ))}
+        </div>
+        <button onClick={finish} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted-foreground">رد کردن</button>
+      </div>
       <AnimatePresence mode="wait">
         <motion.div key={i} initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 60 }} transition={{ duration: 0.4 }}
           drag="x" dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(_, d) => { if (d.offset.x < -60 && i > 0) setI(i - 1); if (d.offset.x > 60) (i < 2 ? setI(i + 1) : finish()); }}
           className="relative flex-1">
-          <div className="relative mx-5 mt-5 h-[54vh] max-h-[500px]">
+          <div className="relative mx-5 mt-4 h-[50vh] max-h-[480px]">
             <motion.div animate={{ opacity: [0.35, 0.6, 0.35] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -inset-3 rounded-[2.75rem] bg-primary/40 blur-2xl" />
             <div className="border-gradient relative h-full overflow-hidden rounded-[2.5rem] bg-black">
               <motion.img initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 6, ease: 'easeOut' }} src={s.img} alt="" className="h-full w-full object-cover object-top" />
@@ -43,17 +53,16 @@ export default function Onboarding() {
             ))}
           </div>
           <div className="mt-6 px-6 text-center">
-            <h2 className="text-3xl font-black">{s.title.split('،')[0]}{s.title.includes('،') && <>، <span className="text-primary">{s.title.split('،')[1]}</span></>}</h2>
-            <p className="mx-auto mt-3 max-w-xs leading-7 text-muted-foreground">{s.text}</p>
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-xs font-bold tracking-widest text-primary">{['۰۱', '۰۲', '۰۳'][i]} / ۰۳</motion.div>
+            <motion.h2 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-2 text-3xl font-black">{s.title.split('،')[0]}{s.title.includes('،') && <>، <span className="text-primary">{s.title.split('،')[1]}</span></>}</motion.h2>
+            <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mx-auto mt-3 max-w-xs leading-7 text-muted-foreground">{s.text}</motion.p>
           </div>
         </motion.div>
       </AnimatePresence>
-      <div className="flex justify-center gap-2 py-6">
-        {slides.map((_, k) => <span key={k} className={`h-2 rounded-full transition-all ${k === i ? 'w-6 bg-primary' : 'w-2 bg-white/20'}`} />)}
-      </div>
+      <div className="py-4" />
       <div className="flex items-center gap-4 px-6 pb-8">
-        <Lime onClick={() => (i < 2 ? setI(i + 1) : finish())} className="flex-1">{i < 2 ? 'بعدی' : 'شروع کن'}</Lime>
-        <button onClick={finish} className="px-3 text-sm text-muted-foreground">رد کردن</button>
+        {i > 0 && <button onClick={() => setI(i - 1)} className="h-12 rounded-full border border-white/15 px-5 text-sm">قبلی</button>}
+        <Lime onClick={() => (i < 2 ? setI(i + 1) : finish())} className="flex-1">{i < 2 ? 'بعدی' : 'شروع کن 🚀'}</Lime>
       </div>
     </div>
   );

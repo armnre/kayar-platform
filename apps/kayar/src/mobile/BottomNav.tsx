@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Headphones, Users, User, Zap } from 'lucide-react';
+import { Home, Headphones, Users, Trophy, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@project/components/lib/utils';
 
@@ -8,7 +8,7 @@ const items = [
   { to: '/app/morshed', label: 'مرشد', icon: Headphones },
   { to: '/app/bodyyar', label: 'بدن‌یار', icon: Zap, center: true },
   { to: '/app/coaches', label: 'مربی', icon: Users },
-  { to: '/app/profile', label: 'پروفایل', icon: User },
+  { to: '/app/rewards', label: 'چالش‌ها', icon: Trophy },
 ];
 
 export default function BottomNav() {

@@ -1,5 +1,5 @@
 {
-  "name": "repository-clone",
+  "name": "github-project-audit",
   "private": true,
   "workspaces": [
     "apps/*",

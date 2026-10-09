@@ -1,12 +1,12 @@
 {
   "project": {
-    "name": "Repository Clone",
-    "basePublicIdentifier": "c3dbd9cb7e88e123"
+    "name": "GitHub Project Audit",
+    "basePublicIdentifier": "a48d659251091dc1"
   },
   "integrations": {
     "github": {
       "type": "github",
-      "connectionId": "svc_559414"
+      "connectionId": "svc_559416"
     }
   }
 }

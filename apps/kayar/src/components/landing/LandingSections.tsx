@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bot, Dumbbell, Salad, LineChart, MessageCircle, QrCode, UserCog, Activity, Star, Play, SkipBack, SkipForward, Heart, Gift, Tag, Shirt, Crown, Users, Smile, Target, ChevronLeft } from 'lucide-react';
+import { Bot, Dumbbell, Salad, LineChart, MessageCircle, QrCode, UserCog, Activity, Star, Play, SkipBack, SkipForward, Heart, Gift, Tag, Shirt, Crown, Users, Smile, Target, ChevronLeft, Trophy } from 'lucide-react';
 import { useCatalog } from '../../lib/data';
 import SafeImg from '../SafeImg';
 import CampaignCard from '../campaigns/CampaignCard';
+import LaunchLink from './LaunchLink';
 
 const rv = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' }, transition: { duration: 0.6 } };
 const Panel = ({ id, children, className = '' }: { id?: string; children: React.ReactNode; className?: string }) => (
@@ -57,7 +58,7 @@ export function BodyYarSection() {
               {feats.map(([I, l]) => <div key={l} className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-background/50 p-3 text-center text-[11px]"><I className="h-6 w-6 text-primary" />{l}</div>)}
             </div>
             <Link to="/app" className="group relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 to-transparent p-5">
-              <img src="https://images.fillout.com/886713/3qilvz8bzw/generated-images/5r5WxH9dp5LQqPmDEqAiTM/img_MvvdgHC972HOQBye.jpg" alt="" className="absolute -bottom-6 -left-6 h-40 w-40 rounded-3xl object-cover opacity-70 transition group-hover:scale-110" />
+              <img src="https://images.fillout.com/886978/vxifokrwnr/generated-images/7ThQfq7GpjPpEz6ri5SJRi/img_7vv03LR8y2ua8dDk.jpg" alt="" className="absolute -bottom-6 -left-6 h-40 w-40 rounded-3xl object-cover opacity-70 transition group-hover:scale-110" />
               <div className="relative max-w-[60%]">
                 <div className="font-black text-primary">لباس کایوش داری؟</div>
                 <p className="mt-2 text-xs leading-6 text-muted-foreground">کد QR داخل لباست رو اسکن کن و بدن‌یار رو رایگان فعال کن.</p>
@@ -72,10 +73,10 @@ export function BodyYarSection() {
 }
 
 const FALLBACK = [
-  { n: 'علی رضایی', t: 'بدنسازی و فیتنس', img: 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/nVSWyE8R48NoVgsYBHj2Mo/img_69MKiepZigEQperd.jpg', y: 9, r: 4.8 },
-  { n: 'سارا محمدی', t: 'تناسب اندام', img: 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/ooQzqi9uPmNbvvTsEW8Dpt/img_gvH9vmNRPg7xjZ_B.jpg', y: 7, r: 4.9 },
-  { n: 'مهدی کاظمی', t: 'فیتنس و هوازی', img: 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/teRZy9FtA6SAmLQ8Z5BY6e/img_y_vNAiVjDxgXvYxI.jpg', y: 6, r: 4.7 },
-  { n: 'نرگس جعفری', t: 'یوگا و انعطاف', img: 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/pn6SgYk3HaG93vLJHa9EXA/img_vvnAcROtXE2J1mi_.jpg', y: 4, r: 4.9 },
+  { n: 'علی رضایی', t: 'بدنسازی و فیتنس', img: 'https://images.fillout.com/886978/vxifokrwnr/generated-images/kmAsFTuYTSezzezPvRzXC9/img_miXn1GtlWJAIGuSj.jpg', y: 9, r: 4.8 },
+  { n: 'سارا محمدی', t: 'تناسب اندام', img: 'https://images.fillout.com/886978/vxifokrwnr/generated-images/4fcXHBs1mD9HgBV1M2H4mn/img_1qbwu-TJC0QBBJGH.jpg', y: 7, r: 4.9 },
+  { n: 'مهدی کاظمی', t: 'فیتنس و هوازی', img: 'https://images.fillout.com/886978/vxifokrwnr/generated-images/qA943zH34JhoeVzoUqSoQG/img_2ZrzKa2dYS0liRO7.jpg', y: 6, r: 4.7 },
+  { n: 'نرگس جعفری', t: 'یوگا و انعطاف', img: 'https://images.fillout.com/886978/vxifokrwnr/generated-images/23iASUNxspXxsvaSRXREnS/img_1E1EzTaocCWTSLZb.jpg', y: 4, r: 4.9 },
 ];
 
 export function CoachesSection() {
@@ -151,38 +152,67 @@ export function MorshedSection() {
 }
 
 export function ShopSection() {
+  const perks = [[QrCode, 'کد فعال‌سازی روی هر لباس'], [Bot, 'بدن‌یار رایگان'], [Trophy, 'امتیاز و جایزه در کایار']] as const;
   return (
-    <Panel id="shop" className="grid items-center gap-6 md:grid-cols-2">
-      <div>
-        <div className="text-3xl font-black">کایوش</div>
-        <p className="mt-1 text-sm text-muted-foreground">فروشگاه لباس ورزشی — هر لباس، یک بدن‌یار رایگان</p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link to="/app" className="rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground">فعال‌سازی با کد لباس</Link>
-          <Link to="/app" className="rounded-full border border-white/15 px-6 py-3 text-sm">مشاهده همه محصولات</Link>
+    <motion.section {...rv} id="shop" className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-card/70">
+      <div className="absolute -left-20 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-primary/20 blur-[100px]" />
+      <div className="relative grid items-center gap-8 p-6 md:grid-cols-[1.1fr_1fr] md:p-12">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">فروشگاه رسمی پوشاک ورزشی</span>
+          <h2 className="mt-4 text-4xl font-black md:text-5xl">کاپوش</h2>
+          <p className="mt-3 text-lg text-muted-foreground">فروشگاه لباس ورزشی — <span className="font-bold text-foreground">هر لباس، یک بدن‌یار رایگان</span></p>
+          <div className="mt-6 grid gap-2 sm:grid-cols-3">
+            {perks.map(([I, l]) => (
+              <div key={l} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-background/50 p-3 text-xs font-bold"><I className="h-4 w-4 shrink-0 text-primary" />{l}</div>
+            ))}
+          </div>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link to="/app/bodyyar" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground shadow-[0_10px_30px_-8px_hsl(var(--primary))] transition hover:scale-105"><QrCode className="h-4 w-4" />فعال‌سازی با کد لباس</Link>
+            <a href="https://kapoosh.ir/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-bold transition hover:border-primary hover:text-primary">مشاهده همه محصولات<ChevronLeft className="h-4 w-4" /></a>
+          </div>
         </div>
+        <a href="https://kapoosh.ir/" target="_blank" rel="noreferrer" className="group relative block overflow-hidden rounded-3xl border border-white/10">
+          <img src="https://images.fillout.com/886978/vxifokrwnr/generated-images/7ThQfq7GpjPpEz6ri5SJRi/img_7vv03LR8y2ua8dDk.jpg" alt="تیشرت تمرین کاپوش" className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5">
+            <div><div className="font-black text-white">تیشرت تمرین کاپوش</div><div className="mt-1 text-xs text-white/70">دارای کد فعال‌سازی بدن‌یار</div></div>
+            <span className="rounded-full bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground">خرید از kapoosh.ir</span>
+          </div>
+        </a>
       </div>
-      <div className="flex items-center gap-4 rounded-3xl border border-white/10 bg-background/60 p-4">
-        <img src="https://images.fillout.com/886713/3qilvz8bzw/generated-images/5r5WxH9dp5LQqPmDEqAiTM/img_MvvdgHC972HOQBye.jpg" alt="تیشرت تمرین کایوش" className="h-32 w-32 rounded-2xl object-cover" />
-        <div className="flex-1">
-          <div className="font-black">تیشرت تمرین کایوش</div>
-          <div className="mt-1 text-lg font-black text-primary">۱٬۱۹۰٬۰۰۰ تومان</div>
-          <div className="mt-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-[11px] text-primary">دارای کد فعال‌سازی بدن‌یار</div>
-        </div>
-      </div>
-    </Panel>
+    </motion.section>
   );
 }
 
 export function FinalCta() {
+  const perks: [typeof Bot, string][] = [[Bot, 'برنامه شخصی با بدن‌یار'], [Users, 'مربیان تأییدشده'], [Trophy, 'چالش و جایزه واقعی']];
   return (
-    <motion.section {...rv} className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-primary/30 bg-gradient-to-l from-primary/20 via-card to-card">
-      <img src="https://images.fillout.com/886713/3qilvz8bzw/generated-images/pn6SgYk3HaG93vLJHa9EXA/img_vvnAcROtXE2J1mi_.jpg" alt="" className="absolute left-0 top-0 h-full w-1/2 object-cover opacity-60 [mask-image:linear-gradient(to_right,black,transparent)]" />
-      <div className="relative max-w-xl p-8 md:p-12">
-        <h2 className="text-3xl font-black md:text-4xl">آماده‌ای برای <span className="text-primary">نسخه‌ی بهتر خودت؟</span></h2>
-        <p className="mt-3 text-muted-foreground">با کایار، قدم‌به‌قدم به سمت سلامتی، قدرت و اعتمادبه‌نفس.</p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link to="/app" className="inline-block rounded-full bg-primary px-8 py-3.5 font-black text-primary-foreground shadow-[0_10px_40px_-8px_hsl(var(--primary))]">برنامه‌ام رو بساز</Link>
-          <Link to="/app/coach/login" className="inline-block rounded-full border border-white/20 px-8 py-3.5 font-bold transition hover:border-primary hover:text-primary">مربی هستم؛ درخواست عضویت</Link>
+    <motion.section {...rv} className="relative mx-3 overflow-hidden rounded-[2rem] border border-primary/30 bg-card md:mx-auto md:max-w-7xl">
+      <div className="relative h-56 sm:h-72 md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
+        <motion.img initial={{ scale: 1.15 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ duration: 1.6 }}
+          src="https://images.fillout.com/886978/vxifokrwnr/generated-images/cbdB6kJHZ9StPpLHYzZmd8/img_tqRVkqrDXZUKNjNp.jpg" alt="" className="h-full w-full object-cover object-top" />
+        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent md:bg-gradient-to-r md:from-transparent md:via-card/40 md:to-card" />
+        <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 4, repeat: Infinity }}
+          className="absolute bottom-4 left-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-black/60 px-3 py-2 backdrop-blur-xl">
+          <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary text-primary-foreground"><Target className="h-4 w-4" /></span>
+          <div className="text-xs"><div className="text-white/60">هدف این هفته</div><div className="font-black text-white">۴ از ۵ تمرین ✓</div></div>
+        </motion.div>
+      </div>
+      <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-[100px]" />
+      <div className="relative p-6 pt-2 md:max-w-xl md:p-12">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-bold text-primary">رایگان شروع کن</span>
+        <h2 className="mt-3 text-[1.75rem] font-black leading-[1.4] md:text-4xl">آماده‌ای برای<br /><span className="text-gradient">نسخه‌ی بهتر خودت؟</span></h2>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground md:text-base">با کایار، قدم‌به‌قدم به سمت سلامتی، قدرت و اعتمادبه‌نفس.</p>
+        <ul className="mt-5 space-y-2.5">
+          {perks.map(([Ic, t], k) => (
+            <motion.li key={t} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 + k * 0.1 }} className="flex items-center gap-3 text-sm font-medium">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/15 text-primary"><Ic className="h-4 w-4" /></span>{t}
+            </motion.li>
+          ))}
+        </ul>
+        <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
+          <LaunchLink className="inline-flex justify-center rounded-full bg-primary px-8 py-4 font-black text-primary-foreground shadow-[0_10px_40px_-8px_hsl(var(--primary))] transition active:scale-95">برنامه‌ام رو بساز</LaunchLink>
+          <Link to="/app/coach/login" className="inline-flex justify-center rounded-full border border-white/20 px-8 py-3.5 text-sm font-bold transition hover:border-primary hover:text-primary">مربی هستم؛ درخواست عضویت</Link>
         </div>
       </div>
     </motion.section>

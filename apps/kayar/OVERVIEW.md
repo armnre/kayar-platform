@@ -51,6 +51,6 @@ In test mode the session, coach applications, chat, challenge progress, points a
 No real SMS, payment, AI or server-side sync is connected; real services can replace these stores later without changing routes.
 
 ## Workspace migration (Oct 2026)
-Restored from GitHub `main` (PRs #1–#3 all merged, no unmerged branches) into a fresh Zite workspace. The 18 database tables were recreated from `zite.schema.json` with identical names. The admin panel (formerly the separate `kayar-admin` app) is planned to move into this app under `/admin`.
+Restored from GitHub `main` (PRs #1–#4 all merged; PR #4 moved the admin panel to /admin) into a fresh Zite workspace. The 18 database tables were recreated from `zite.schema.json` with identical names. The separate Kayar Admin app was also restored. Bottom nav: Home · Morshed · BodyYar · Coaches · Challenges (profile lives behind the settings icon on Home). Landing shop section links to the Kapoosh store (kapoosh.ir).
 
 E2E: `npm run test:e2e:ci` (build + preview + browser tests; first run `npx playwright install chromium`). Any failing test exits with code 1.
