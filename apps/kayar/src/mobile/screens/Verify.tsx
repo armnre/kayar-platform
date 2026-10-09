@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { MessageSquareText, Timer } from 'lucide-react';
 import { Screen, Lime } from '../kit';
 import { otp, OTP_LENGTH, RESEND_SECONDS, OTP_MODE, DEMO_CODE } from '../otp';
-import { setSession, useSession, toEn, toFa } from '../store';
+import { setSession, useSession, useCoachApps, toEn, toFa } from '../store';
+import { homeFor, safeNext } from '../auth';
 
 export default function Verify() {
   const s = useSession();
   const nav = useNavigate();
+  const apps = useCoachApps();
+  const [sp] = useSearchParams();
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [left, setLeft] = useState(RESEND_SECONDS);
   const [busy, setBusy] = useState(false);
@@ -17,7 +20,7 @@ export default function Verify() {
   const refs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => { const t = setInterval(() => setLeft((l) => Math.max(0, l - 1)), 1000); return () => clearInterval(t); }, []);
-  if (s.verified) return <Navigate to={s.name ? '/app/home' : '/app/complete-profile'} replace />;
+  if (s.verified) return <Navigate to={(s.name && safeNext(sp.get('next'), 'user')) || homeFor(s, apps)} replace />;
   if (!s.phone) return <Navigate to="/app/login" replace />;
 
   const check = async (code: string) => {
@@ -25,9 +28,9 @@ export default function Verify() {
     try {
       const ok = await otp.verify(s.phone!, code);
       if (!ok) { setShake((x) => x + 1); setDigits(Array(OTP_LENGTH).fill('')); refs.current[0]?.focus(); toast.error('کد وارد شده صحیح نیست.'); return; }
-      setSession({ verified: true });
-      // Replace both login & verify entries so "back" can't return to the phone screen.
-      nav(s.name ? '/app/home' : '/app/complete-profile', { replace: true });
+      setSession({ verified: true, role: 'user' });
+      // replace: "back" must not return to the code screen.
+      nav(s.name ? safeNext(sp.get('next'), 'user') ?? '/app/home' : '/app/complete-profile', { replace: true });
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
   };
 

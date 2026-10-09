@@ -101,7 +101,7 @@ export function CoachesSection() {
           <Crown className="h-8 w-8 text-accent" />
           <div className="mt-3 text-xl font-black">مربی هستی؟ به کایار بپیوند</div>
           <p className="mt-2 text-sm leading-7 text-muted-foreground">پروفایلت رو بساز، شاگرد جذب کن و برنامه‌هات رو بفروش. (تأیید توسط تیم کایار)</p>
-          <div className="mt-5 flex flex-wrap gap-2"><Link to="/coach/login" className="inline-block rounded-full bg-accent px-6 py-2.5 text-sm font-black text-accent-foreground">درخواست همکاری مربی</Link><Link to="/coach/login" className="inline-block rounded-full border border-white/20 px-5 py-2.5 text-sm font-bold">ورود مربیان</Link></div>
+          <div className="mt-5 flex flex-wrap gap-2"><Link to="/app/coach/login" className="inline-block rounded-full bg-accent px-6 py-2.5 text-sm font-black text-accent-foreground">درخواست همکاری مربی</Link><Link to="/app/coach/login" className="inline-block rounded-full border border-white/20 px-5 py-2.5 text-sm font-bold">ورود مربیان</Link></div>
         </div>
       </div>
     </Panel>
@@ -224,7 +224,7 @@ export function FinalCta() {
         <p className="mt-3 text-muted-foreground">با کایار، قدم‌به‌قدم به سمت سلامتی، قدرت و اعتمادبه‌نفس.</p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link to="/app" className="inline-block rounded-full bg-primary px-8 py-3.5 font-black text-primary-foreground shadow-[0_10px_40px_-8px_hsl(var(--primary))]">برنامه‌ام رو بساز</Link>
-          <Link to="/coach/login" className="inline-block rounded-full border border-white/20 px-8 py-3.5 font-bold transition hover:border-primary hover:text-primary">مربی هستم؛ درخواست عضویت</Link>
+          <Link to="/app/coach/login" className="inline-block rounded-full border border-white/20 px-8 py-3.5 font-bold transition hover:border-primary hover:text-primary">مربی هستم؛ درخواست عضویت</Link>
         </div>
       </div>
     </motion.section>

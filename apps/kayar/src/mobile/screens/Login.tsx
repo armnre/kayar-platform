@@ -1,29 +1,27 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import { Smartphone, Info } from 'lucide-react';
-import { loginWithRedirect } from 'zitejs/auth';
+import { Smartphone, Info, BadgeCheck } from 'lucide-react';
 import { Screen, Lime, Bolt } from '../kit';
 import { otp, isValidIrMobile, normalizePhone, OTP_MODE, DEMO_CODE } from '../otp';
-import { setSession, useSession, toEn, toFa } from '../store';
+import { startSession, toEn, toFa } from '../store';
 
 export default function Login() {
   const nav = useNavigate();
   const [phone, setPhone] = useState('');
   const [busy, setBusy] = useState(false);
-  const s = useSession();
+  const [sp] = useSearchParams();
+  const next = sp.get('next');
   const p = normalizePhone(toEn(phone));
   const valid = isValidIrMobile(p);
-
-  if (s.verified) return <Navigate to={s.name ? '/app/home' : '/app/complete-profile'} replace />;
 
   const submit = async () => {
     setBusy(true);
     try {
       await otp.send(p);
-      setSession({ phone: p, verified: false });
-      nav('/app/verify');
+      startSession('user', p, false);
+      nav(`/app/verify${next ? `?next=${encodeURIComponent(next)}` : ''}`);
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
   };
 
@@ -52,10 +50,9 @@ export default function Login() {
         )}
       </form>
       <div className="mt-8">
-        <div className="flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-white/10" />یا ورود با<span className="h-px flex-1 bg-white/10" /></div>
-        <div className="mt-4 flex justify-center gap-3">
-          <button onClick={() => loginWithRedirect({ redirectUrl: '/home' })} className="grid h-14 w-14 place-items-center rounded-2xl border border-white/10 bg-white/[0.03] text-xl font-black text-[#4285F4] transition active:scale-90" aria-label="ورود با ایمیل">G</button>
-        </div>
+        <Link to="/app/coach/login" className="flex items-center justify-center gap-2 rounded-2xl border border-accent/30 bg-accent/10 p-3 text-sm font-bold text-accent transition active:scale-[0.98]">
+          <BadgeCheck className="h-4 w-4" />مربی هستید؟ ورود به پرتال مربیان
+        </Link>
         <p className="mt-6 text-center text-xs text-muted-foreground">حساب کاربری ندارید؟ <button onClick={() => valid ? submit() : toast('شماره موبایلت رو وارد کن؛ ثبت‌نام خودکار انجام می‌شه.')} className="font-bold text-primary">ثبت‌نام کنید</button></p>
       </div>
     </Screen>

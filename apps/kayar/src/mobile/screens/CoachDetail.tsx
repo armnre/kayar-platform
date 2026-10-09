@@ -1,16 +1,20 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import { Star, Award, CalendarCheck, Clock } from 'lucide-react';
+import { Star, Award, CalendarCheck, Clock, MessageCircle } from 'lucide-react';
 import { Skeleton } from '@project/components/ui/skeleton';
 import SafeImg from '../../components/SafeImg';
 import { useCatalog } from '../../lib/data';
 import { Screen, Card } from '../kit';
-import { toFa } from '../store';
+import { toFa, useSession } from '../store';
+import { openConv } from '../../lib/demo';
 import NotFound from './NotFound';
 
 export default function CoachDetail() {
   const { id } = useParams();
   const { data, isLoading } = useCatalog();
+  const s = useSession();
+  const nav = useNavigate();
   if (isLoading) return <Screen back="/app/coaches"><Skeleton className="h-72 rounded-3xl" /></Screen>;
   const c = data?.coaches.find((x) => x.id === id);
   if (!c) return <NotFound />;
@@ -44,7 +48,12 @@ export default function CoachDetail() {
           </motion.div>
         )) : <p className="text-sm text-muted-foreground">این مربی هنوز پلنی ثبت نکرده است.</p>}
       </div>
-      <a href={`/coaches/${c.id}`} className="mt-6 flex h-14 items-center justify-center rounded-2xl bg-primary font-black text-primary-foreground shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.8)]">رزرو جلسه با {c.name.split(' ')[0]}</a>
+      <div className="mt-6 grid grid-cols-[1fr_auto] gap-2">
+        <button onClick={() => toast.success(`درخواست رزرو برای ${c.name} ثبت شد (آزمایشی). مربی از طریق پیام با شما هماهنگ می‌کند.`)}
+          className="flex h-14 items-center justify-center rounded-2xl bg-primary font-black text-primary-foreground shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.8)]">رزرو جلسه با {c.name.split(' ')[0]}</button>
+        <button onClick={() => nav(`/app/messages/${openConv(c, { phone: s.phone ?? 'guest', name: s.name ?? '' })}`)} aria-label="پیام به مربی"
+          className="grid h-14 w-14 place-items-center rounded-2xl border border-primary/40 text-primary"><MessageCircle className="h-5 w-5" /></button>
+      </div>
     </Screen>
   );
 }

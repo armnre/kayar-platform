@@ -1,8 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Home, Users, Headphones, Trophy, User, Zap, LogOut, MessagesSquare, BadgeCheck } from 'lucide-react';
-import { useConversations } from '../lib/chat';
-import { useMe } from '../lib/data';
-import { useAuth, loginWithRedirect, logout } from 'zitejs/auth';
+import { Home, Users, Headphones, Trophy, User, Zap } from 'lucide-react';
+import { useSession, useCoachApps, isLoggedIn } from '../mobile/store';
+import { homeFor } from '../mobile/auth';
 import { Button } from '@project/components/ui/button';
 import { Toaster } from '@project/components/ui/sonner';
 import { cn } from '@project/components/lib/utils';
@@ -12,15 +11,16 @@ import { PlayerProvider } from '../lib/player';
 import MiniPlayer from './morshed/MiniPlayer';
 
 const nav = [
-  { to: '/home', label: 'خانه', icon: Home },
-  { to: '/coaches', label: 'مربیان', icon: Users },
-  { to: '/bodyyar', label: 'بدن‌یار', icon: Zap },
-  { to: '/morshed', label: 'مرشد', icon: Headphones },
+  { to: '/app/home', label: 'خانه', icon: Home },
+  { to: '/app/coaches', label: 'مربیان', icon: Users },
+  { to: '/app/bodyyar', label: 'بدن‌یار', icon: Zap },
+  { to: '/app/morshed', label: 'مرشد', icon: Headphones },
   { to: '/campaigns', label: 'کمپین‌ها', icon: Trophy },
 ];
 
 export default function Layout() {
-  const { user } = useAuth();
+  const s = useSession();
+  const apps = useCoachApps();
   const loc = useLocation();
   return (
     <PlayerProvider>
@@ -29,7 +29,7 @@ export default function Layout() {
       <div className="pointer-events-none fixed bottom-0 left-0 h-[26rem] w-[26rem] rounded-full bg-accent/10 blur-[140px]" />
       <header className="sticky top-0 z-40 border-b border-white/5 bg-background/60 backdrop-blur-2xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <NavLink to="/home"><Logo /></NavLink>
+          <NavLink to="/"><Logo /></NavLink>
           <nav className="glass hidden items-center gap-1 rounded-full p-1 md:flex">
             {nav.map((n) => (
               <NavLink key={n.to} to={n.to} className="relative rounded-full px-4 py-2 text-sm font-medium">
@@ -42,18 +42,10 @@ export default function Layout() {
               </NavLink>
             ))}
           </nav>
-          {user ? (
-            <div className="flex items-center gap-2">
-              <CoachLink />
-              <MessagesLink />
-              <NavLink to="/profile" className="flex items-center gap-2 rounded-full border border-white/10 py-1 pe-3 ps-1 text-sm transition hover:border-primary/50">
-                <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-black text-primary-foreground">{(user.firstName || user.email)[0]?.toUpperCase()}</span>
-                <span className="hidden sm:inline">پروفایل</span>
-              </NavLink>
-              <Button size="icon" variant="ghost" className="hidden rounded-full md:inline-flex" onClick={() => logout()} aria-label="خروج"><LogOut className="h-4 w-4" /></Button>
-            </div>
+          {isLoggedIn(s) ? (
+            <Button asChild size="sm" className="rounded-full px-5 font-bold"><NavLink to={homeFor(s, apps)}>ورود به اپ</NavLink></Button>
           ) : (
-            <Button size="sm" className="rounded-full px-5 font-bold" onClick={() => loginWithRedirect({ redirectUrl: '/welcome' })}>ورود / ثبت‌نام</Button>
+            <Button asChild size="sm" className="rounded-full px-5 font-bold"><NavLink to="/app/login">ورود / ثبت‌نام</NavLink></Button>
           )}
         </div>
       </header>
@@ -72,11 +64,11 @@ export default function Layout() {
 }
 
 function MobileNav() {
-  const items = [nav[0], nav[1], nav[2], nav[3], { to: '/profile', label: 'پروفایل', icon: User }];
+  const items = [nav[0], nav[1], nav[2], nav[3], { to: '/app/profile', label: 'پروفایل', icon: User }];
   return (
     <nav className="fixed inset-x-3 bottom-3 z-50 md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="glass border-gradient flex items-end justify-around rounded-3xl px-2 pb-2 pt-2 shadow-2xl">
-        {items.map((n) => n.to === '/bodyyar' ? (
+        {items.map((n) => n.to === '/app/bodyyar' ? (
           <NavLink key={n.to} to={n.to} className="-mt-8 flex flex-col items-center gap-1">
             {({ isActive }) => (
               <>
@@ -100,26 +92,5 @@ function MobileNav() {
         ))}
       </div>
     </nav>
-  );
-}
-
-function MessagesLink() {
-  const { data } = useConversations();
-  const n = data?.totalUnread ?? 0;
-  return (
-    <NavLink to="/messages" aria-label="پیام‌ها" className="relative grid h-10 w-10 place-items-center rounded-full border border-white/10 transition hover:border-primary/50">
-      <MessagesSquare className="h-4 w-4" />
-      {n > 0 && <span className="absolute -left-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-black text-primary-foreground">{n > 99 ? '۹۹+' : n.toLocaleString('fa-IR')}</span>}
-    </NavLink>
-  );
-}
-
-function CoachLink() {
-  const { data } = useMe();
-  if (!data?.coach) return null;
-  return (
-    <NavLink to="/coach" className="hidden h-10 items-center gap-1.5 rounded-full border border-accent/40 px-3 text-sm text-accent transition hover:bg-accent/10 sm:flex">
-      <BadgeCheck className="h-4 w-4" />پنل مربی
-    </NavLink>
   );
 }
