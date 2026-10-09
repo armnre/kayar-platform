@@ -89,6 +89,7 @@ export default function MobileApp() {
                 <Route path="profile" element={U(<Profile />)} />
                 <Route path="notifications" element={U(<Notifications />)} />
                 <Route path="morshed" element={U(<MorshedScreen />)} />
+                <Route path="morshed/:id" element={U(<MorshedScreen />)} />
                 <Route path="coaches" element={U(<CoachesScreen />)} />
                 <Route path="coaches/:id" element={U(<CoachDetail />)} />
                 <Route path="bodyyar" element={U(<BodyYarEntry />)} />

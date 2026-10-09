@@ -12,7 +12,10 @@ export const DEMO_CATALOG: C = {
     { id: 'demo-coach-2', name: 'علی رضایی', title: 'مربی دویدن و استقامت', specialties: ['دویدن', 'استقامت'], bio: 'دونده ماراتن و مربی تیم‌های دو استقامت.', avatarUrl: '', yearsExperience: 7, rating: 4.7, reviewCount: 64, certifications: 'مربی دو و میدانی', category: 'دویدن و کاردیو', sports: 'دو', services: ['آنلاین'], levels: ['متوسط', 'پیشرفته'], city: 'اصفهان', acceptingClients: true,
       availability: [], plans: [{ id: 'demo-p2', name: 'آمادگی ۱۰ کیلومتر', sessions: 16, durationWeeks: 8, price: 1800000, description: 'برنامه گام‌به‌گام تا ۱۰ کیلومتر' }] },
   ],
-  audio: [],
+  audio: [
+    { id: 'demo-audio-1', title: 'انگیزه برای ادامه', category: 'پادکست', description: 'قسمت نمونه مرشد.', audioUrl: '', locked: false, membersOnly: false, featured: true, rightsSource: 'نمونه آزمایشی', coverUrl: '', durationSeconds: 420, author: 'کایار' },
+    { id: 'demo-audio-2', title: 'پلی‌لیست دویدن', category: 'موزیک', description: 'موزیک نمونه.', audioUrl: '', locked: false, membersOnly: false, featured: false, rightsSource: 'نمونه آزمایشی', coverUrl: '', durationSeconds: 1800, author: 'کایار' },
+  ],
   campaigns: [
     { id: 'demo-campaign-1', title: 'چالش پاییز فعال', brand: 'کایوش', description: 'یک ماه فعال بمان، قدم بزن و جایزه بگیر.', coverUrl: '', startsOn: iso(-5), endsOn: iso(25), sponsorLogoUrl: '', sponsorWebsite: '', category: 'پیاده‌روی', placement: [], terms: 'ثبت فعالیت روزانه در چالش‌های کمپین.', ctaLabel: 'شرکت در کمپین' },
   ],
@@ -30,5 +33,5 @@ export const DEMO_CATALOG: C = {
 export function withDemo(c: C | undefined): C {
   if (!c) return DEMO_CATALOG;
   const pick = <K extends keyof C>(k: K) => ((c[k] as unknown[])?.length ? c[k] : DEMO_CATALOG[k]);
-  return { ...c, coaches: pick('coaches'), campaigns: pick('campaigns'), challenges: pick('challenges'), rewards: pick('rewards'), audio: c.audio ?? [] };
+  return { ...c, coaches: pick('coaches'), campaigns: pick('campaigns'), challenges: pick('challenges'), rewards: pick('rewards'), audio: pick('audio') };
 }
