@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bell, Crown, Settings, HelpCircle, LogOut, ChevronLeft, Play, Dumbbell, Flame, Medal } from 'lucide-react';
+import { Bell, Crown, Settings, HelpCircle, LogOut, ChevronLeft, Play, Dumbbell, Flame, Medal, MessageCircle, Trophy, Megaphone } from 'lucide-react';
 import Avatar from '../components/Avatar';
 import { resetSession, useSession, toFa } from '../store';
 import { Card } from '../kit';
@@ -42,6 +42,9 @@ export function StatTiles() {
 export function MenuList() {
   const nav = useNavigate();
   const rows = [
+    { i: MessageCircle, l: 'پیام‌ها', go: () => nav('/app/messages') },
+    { i: Trophy, l: 'چالش‌ها و جوایز', go: () => nav('/rewards') },
+    { i: Megaphone, l: 'کمپین‌ها', go: () => nav('/campaigns') },
     { i: Crown, l: 'اشتراک و پلن‌ها', go: () => nav('/app/bodyyar'), tone: 'text-accent' },
     { i: Settings, l: 'تنظیمات', go: () => nav('/app/complete-profile') },
     { i: HelpCircle, l: 'مرکز کمک', go: () => window.open('mailto:support@kayar.app') },

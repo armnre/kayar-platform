@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { LucideIcon, LogIn } from 'lucide-react';
-import { useAuth, loginWithRedirect } from 'zitejs/auth';
+import { Link } from 'react-router-dom';
+import { useAuth } from 'zitejs/auth';
 import { Button } from '@project/components/ui/button';
 import { Skeleton } from '@project/components/ui/skeleton';
 
@@ -40,8 +41,8 @@ export function RequireAuth({ children, title }: { children: ReactNode; title: s
   if (isLoading) return <CardsSkeleton />;
   if (!user)
     return (
-      <Empty icon={LogIn} title={title} text="برای استفاده از این بخش وارد حساب کایار شوید. ورود و ثبت‌نام فقط با ایمیل انجام می‌شود."
-        action={<Button className="rounded-full px-8 font-bold" onClick={() => loginWithRedirect()}>ورود / ثبت‌نام</Button>} />
+      <Empty icon={LogIn} title={title} text="برای استفاده از این بخش وارد حساب کایار شوید. "
+        action={<Button asChild className="rounded-full px-8 font-bold"><Link to="/app/login">ورود / ثبت‌نام</Link></Button>} />
     );
   return <>{children}</>;
 }

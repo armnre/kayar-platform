@@ -11,7 +11,7 @@ export default function NotFound() {
       <div className="mt-2 text-7xl font-black text-primary/20">۴۰۴</div>
       <h1 className="-mt-4 text-2xl font-black">صفحه پیدا نشد!</h1>
       <p className="mt-3 max-w-xs text-sm leading-7 text-muted-foreground">احتمالاً آدرس را اشتباه وارد کرده‌اید، یا صفحه مورد نظر دیگر وجود ندارد.</p>
-      <Lime onClick={() => nav('/app/home')} className="mt-8 max-w-xs">بازگشت به خانه</Lime>
+      <Lime onClick={() => nav('/app')} className="mt-8 max-w-xs">بازگشت به صفحه اصلی</Lime>
     </div>
   );
 }

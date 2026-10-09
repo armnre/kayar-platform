@@ -4,7 +4,7 @@ import { ArrowRight, CalendarDays, ExternalLink, Gift, Megaphone, Trophy } from 
 import { trackCampaignView } from 'zitejs/api';
 import { Button } from '@project/components/ui/button';
 import { Skeleton } from '@project/components/ui/skeleton';
-import { useCatalog, useMe, faDate } from '../lib/data';
+import { useCatalog, usePlay, faDate } from '../lib/data';
 import { Empty, SectionTitle } from '../components/ui-kit';
 import { CampaignCover, SponsorBadge, daysLeft } from '../components/campaigns/CampaignCard';
 import { ChallengeCard, RewardCard } from './RewardsPage';
@@ -12,15 +12,15 @@ import { ChallengeCard, RewardCard } from './RewardsPage';
 export default function CampaignDetailPage() {
   const { id } = useParams();
   const { data, isLoading } = useCatalog();
-  const me = useMe();
-  useEffect(() => { if (id) trackCampaignView({ campaignId: id }).catch(() => {}); }, [id]);
+  const play = usePlay();
+  useEffect(() => { if (id && !id.startsWith('demo-')) trackCampaignView({ campaignId: id }).catch(() => {}); }, [id]);
   if (isLoading) return <Skeleton className="h-[30rem] rounded-3xl" />;
   const c = data?.campaigns.find((x) => x.id === id);
   if (!c) return <Empty icon={Megaphone} title="این کمپین فعال نیست یا پیدا نشد" action={<Button asChild variant="outline"><Link to="/campaigns">همه کمپین‌ها</Link></Button>} />;
   const challenges = data!.challenges.filter((x) => x.campaignId === c.id);
   const rewards = data!.rewards.filter((r) => r.campaignId === c.id);
   const d = daysLeft(c.endsOn);
-  const points = me.data?.profile.points ?? 0;
+  const points = play.points;
 
   return (
     <div className="space-y-10">
@@ -50,7 +50,7 @@ export default function CampaignDetailPage() {
       <section id="join">
         <SectionTitle title="چالش‌های کمپین" sub="پیشرفتت در سرور ثبت و بررسی می‌شود؛ امتیاز فقط یک‌بار پس از تکمیل داده می‌شود." />
         {challenges.length === 0 ? <Empty icon={Trophy} title="چالشی برای این کمپین تعریف نشده" /> : (
-          <div className="grid gap-3 md:grid-cols-2">{challenges.map((x) => <ChallengeCard key={x.id} c={x} part={me.data?.participations.find((p) => p.challengeId === x.id)} />)}</div>
+          <div className="grid gap-3 md:grid-cols-2">{challenges.map((x) => <ChallengeCard key={x.id} c={x} part={play.partOf(x.id)} />)}</div>
         )}
       </section>
       {rewards.length > 0 && (

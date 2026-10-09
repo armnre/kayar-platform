@@ -17,7 +17,7 @@ export default function MiniPlayer() {
           className="glass fixed inset-x-3 bottom-28 z-40 overflow-hidden rounded-2xl shadow-2xl md:bottom-4 md:left-auto md:right-4 md:w-[400px]">
           <div className="h-0.5 bg-white/10"><div className="h-full bg-primary transition-[width]" style={{ width: `${pct}%` }} /></div>
           <div className="flex items-center gap-3 p-2.5">
-            <Link to={`/morshed/${p.current.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+            <Link to="/app/morshed" className="flex min-w-0 flex-1 items-center gap-3">
               <Cover a={p.current} className="h-11 w-11 rounded-xl" />
               <div className="min-w-0"><div className="truncate text-sm font-bold">{p.current.title}</div><div className="truncate text-[11px] text-muted-foreground">{p.current.author}</div></div>
             </Link>

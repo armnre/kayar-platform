@@ -2,24 +2,22 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Trophy, Gift, Megaphone, Plus, Check, Loader2, Coins } from 'lucide-react';
-import { useAuth, loginWithRedirect } from 'zitejs/auth';
-import { challengeProgress, redeemReward } from 'zitejs/api';
 import { Button } from '@project/components/ui/button';
 import { Input } from '@project/components/ui/input';
 import { Progress } from '@project/components/ui/progress';
-import { useCatalog, useMe, useRefresh, fa, faDate, errMsg } from '../lib/data';
+import { useCatalog, usePlay, fa, faDate, errMsg } from '../lib/data';
 import { PageHeader, SectionTitle, CardsSkeleton, Empty } from '../components/ui-kit';
 import SafeImg from '../components/SafeImg';
 
 export default function RewardsPage({ embedded }: { embedded?: boolean }) {
   const { data, isLoading } = useCatalog();
-  const me = useMe();
-  const points = me.data?.profile.points ?? 0;
+  const play = usePlay();
+  const points = play.points;
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageHeader title={embedded ? 'چالش‌ها و' : 'چالش و'} accent="جایزه" sub="در چالش‌ها شرکت کن، امتیاز بگیر و جایزه ببر." />
-        {me.data && <div className="glass glow flex items-center gap-3 rounded-2xl px-5 py-3"><Coins className="h-6 w-6 text-primary" /><div><div className="text-[11px] text-muted-foreground">امتیاز شما</div><div className="text-2xl font-black text-primary">{fa(points)}</div></div></div>}
+        {<div className="glass glow flex items-center gap-3 rounded-2xl px-5 py-3"><Coins className="h-6 w-6 text-primary" /><div><div className="text-[11px] text-muted-foreground">امتیاز شما{play.mode === 'demo' && ' (آزمایشی)'}</div><div className="text-2xl font-black text-primary">{fa(points)}</div></div></div>}
       </div>
       {isLoading ? <CardsSkeleton /> : (
         <>
@@ -39,7 +37,7 @@ export default function RewardsPage({ embedded }: { embedded?: boolean }) {
           <section>
             <SectionTitle title="چالش‌ها" />
             {data!.challenges.length === 0 ? <Empty icon={Trophy} title="فعلاً چالش فعالی نیست" /> : (
-              <div className="grid gap-3 md:grid-cols-2">{data!.challenges.map((c) => <ChallengeCard key={c.id} c={c} part={me.data?.participations.find((p) => p.challengeId === c.id)} />)}</div>
+              <div className="grid gap-3 md:grid-cols-2">{data!.challenges.map((c) => <ChallengeCard key={c.id} c={c} part={play.partOf(c.id)} />)}</div>
             )}
           </section>
           <section>
@@ -56,17 +54,14 @@ export default function RewardsPage({ embedded }: { embedded?: boolean }) {
 
 type Ch = NonNullable<ReturnType<typeof useCatalog>['data']>['challenges'][number];
 export function ChallengeCard({ c, part }: { c: Ch; part?: { progress: number; completed: boolean } }) {
-  const { user } = useAuth();
-  const refresh = useRefresh();
+  const play = usePlay();
   const [amt, setAmt] = useState('');
   const [busy, setBusy] = useState(false);
   const run = async (add?: number) => {
-    if (!user) return loginWithRedirect();
     setBusy(true);
     try {
-      const r = await challengeProgress({ challengeId: c.id, add });
-      if (r.awarded) toast.success(`تبریک! ${fa(r.awarded)} امتیاز گرفتی 🎉`); else toast.success(add ? 'پیشرفت ثبت شد' : 'به چالش پیوستی');
-      setAmt(''); refresh();
+      await play.join(c, add);
+      setAmt('');
     } catch (e) { toast.error(errMsg(e)); } finally { setBusy(false); }
   };
   return (
@@ -93,13 +88,11 @@ export function ChallengeCard({ c, part }: { c: Ch; part?: { progress: number; c
 
 type Rw = NonNullable<ReturnType<typeof useCatalog>['data']>['rewards'][number];
 export function RewardCard({ r, points }: { r: Rw; points: number }) {
-  const { user } = useAuth();
-  const refresh = useRefresh();
+  const play = usePlay();
   const [busy, setBusy] = useState(false);
   const redeem = async () => {
-    if (!user) return loginWithRedirect();
     setBusy(true);
-    try { const { code } = await redeemReward({ rewardId: r.id }); toast.success('جایزه دریافت شد', { description: `کد شما: ${code}` }); refresh(); }
+    try { await play.redeem(r); }
     catch (e) { toast.error(errMsg(e)); } finally { setBusy(false); }
   };
   return (
@@ -112,7 +105,7 @@ export function RewardCard({ r, points }: { r: Rw; points: number }) {
         {r.perUserLimit > 0 && <div>حداکثر {fa(r.perUserLimit)} بار برای هر نفر</div>}
         {r.expiresOn && <div>مهلت دریافت تا {faDate(r.expiresOn)}</div>}
       </div>
-      <Button size="sm" disabled={busy || r.stock <= 0 || (!!user && points < r.costPoints)} onClick={redeem} className="mt-3 rounded-xl font-bold">{fa(r.costPoints)} امتیاز</Button>
+      <Button size="sm" disabled={busy || r.stock <= 0 || points < r.costPoints} onClick={redeem} className="mt-3 rounded-xl font-bold">{fa(r.costPoints)} امتیاز</Button>
     </div>
   );
 }

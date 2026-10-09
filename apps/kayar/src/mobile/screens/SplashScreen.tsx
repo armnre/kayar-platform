@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useSession, isLoggedIn, toFa } from '../store';
+import { useSession, useCoachApps, toFa } from '../store';
+import { homeFor } from '../auth';
+
+/** Full intro once per browser tab; afterwards (refresh, back to /app) it resolves almost instantly. */
+const SEEN = 'kayar.splash.seen';
 
 const MSGS = ['گرم کردن موتور…', 'شارژ انرژی…', 'آماده‌سازی بدن‌یار…', 'بزن بریم!'];
 
 export default function SplashScreen() {
   const nav = useNavigate();
   const s = useSession();
+  const apps = useCoachApps();
   const [p, setP] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setP((x) => Math.min(100, x + 1.4)), 40);
+    const quick = sessionStorage.getItem(SEEN) === '1';
+    const total = quick ? 450 : 2600;
+    const t = setInterval(() => setP((x) => Math.min(100, x + 100 / (total / 40))), 40);
     const d = setTimeout(() => {
-      if (!s.onboarded) nav('/app/welcome', { replace: true });
-      else if (!isLoggedIn(s)) nav('/app/login', { replace: true });
-      else if (!s.name) nav('/app/complete-profile', { replace: true });
-      else nav('/app/home', { replace: true });
-    }, 3300);
+      sessionStorage.setItem(SEEN, '1');
+      // Session + role are read synchronously from storage, so the target is final — no intermediate pages.
+      nav(homeFor(s, apps), { replace: true });
+    }, total);
     return () => { clearInterval(t); clearTimeout(d); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

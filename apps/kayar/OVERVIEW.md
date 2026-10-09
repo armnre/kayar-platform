@@ -33,3 +33,6 @@ Sponsored campaigns (/campaigns) with sponsor, dates, terms, call to action and 
 
 ## BodyYar AI
 Uses any OpenAI-compatible provider, keys kept server-side only: set secret ZITE_AI_API_KEY (and optionally ZITE_AI_BASE_URL, ZITE_AI_MODEL) in app Settings → Secrets. Without a key, chat and plan generation are clearly disabled — nothing is simulated. Advice is cautious and never a substitute for medical care.
+
+## Routing & roles (test mode)
+Everything lives under /app with one test session (phone + code 123456) and a role: athlete, coach or admin. Athletes sign in at /app/login, coaches at /app/coach/login (then land on apply / status / dashboard depending on approval), admins at /app/admin/login (test number 09120000000). Each area is closed to the other roles. The public site is / plus /campaigns and /rewards; old web URLs redirect into /app.
