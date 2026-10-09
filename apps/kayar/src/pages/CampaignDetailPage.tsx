@@ -56,15 +56,15 @@ export default function CampaignDetailPage() {
         </aside>
       </div>
       <section id="join">
-        <SectionTitle title="چالش‌های کمپین" sub="پیشرفتت در سرور ثبت و بررسی می‌شود؛ امتیاز فقط یک‌بار پس از تکمیل داده می‌شود." />
+        <SectionTitle title="چالش‌های کمپین" />
         {c.phase !== 'live' ? <Empty icon={Trophy} title={c.phase === 'upcoming' ? 'چالش‌ها با شروع کمپین فعال می‌شوند' : 'شرکت در این کمپین بسته شده است'} /> : challenges.length === 0 ? <Empty icon={Trophy} title="چالشی برای این کمپین تعریف نشده" /> : (
-          <div className="grid gap-3 md:grid-cols-2">{challenges.map((x) => <ChallengeCard key={x.id} c={x} part={play.partOf(x.id)} />)}</div>
+          <div className="grid gap-4 md:grid-cols-2">{challenges.map((x) => <ChallengeCard key={x.id} c={x} part={play.partOf(x.id)} />)}</div>
         )}
       </section>
       {rewards.length > 0 && (
         <section>
           <SectionTitle title="پاداش‌های کمپین" />
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">{rewards.map((r) => <RewardCard key={r.id} r={r} points={points} />)}</div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{rewards.map((r) => <RewardCard key={r.id} r={r} points={points} />)}</div>
         </section>
       )}
       {rewards.length === 0 && <p className="flex items-center gap-2 text-xs text-muted-foreground"><Gift className="h-4 w-4" />امتیازهای این کمپین را می‌توانی در <Link to={`${base}/campaigns`} className="text-primary">فروشگاه جوایز</Link> خرج کنی.</p>}

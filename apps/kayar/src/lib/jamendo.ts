@@ -6,7 +6,7 @@ export type JTrack = JamendoTracksOutputType['tracks'][number];
 
 /** Genres from Jamendo's own "featured selections" (per the API docs), labelled in Persian. */
 export const GENRES = [
-  ['', 'همه'], ['electronic', 'الکترونیک'], ['hiphop', 'هیپ‌هاپ'], ['rock', 'راک'], ['pop', 'پاپ'],
+  ['', 'همه'], ['workout', 'تمرین'], ['motivational', 'انگیزشی'], ['electronic', 'الکترونیک'], ['hiphop', 'هیپ‌هاپ'], ['rock', 'راک'], ['pop', 'پاپ'],
   ['lounge', 'لانژ'], ['relaxation', 'آرامش'], ['soundtrack', 'حماسی'], ['world', 'جهانی'], ['jazz', 'جاز'], ['classical', 'کلاسیک'],
 ] as const;
 

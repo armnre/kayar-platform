@@ -22,7 +22,6 @@ type Out = z.infer<typeof OutSchema>;
 type JTrack = { id: string; name: string; artist_name: string; album_name: string; image: string; album_image: string; audio: string; duration: number; license_ccurl: string; shareurl: string };
 
 type JResp = { headers?: { status?: string; code?: number; error_message?: string }; results?: JTrack[] };
-const DEFAULT_CLIENT_ID = 'e974c508';
 
 export default createEndpoint({
   description: 'Lists and searches playable Creative Commons tracks from Jamendo for Morshed',
@@ -44,21 +43,23 @@ export default createEndpoint({
 
     // Jamendo read client_id is a public app identifier (it appears in every stream URL).
     // The secret wins when it's valid; the verified id is the fallback.
-    const ids = [...new Set([(process.env.ZITE_JAMENDO_CLIENT_ID || '').trim(), DEFAULT_CLIENT_ID].filter(Boolean))];
-    let json = await request(ids[0], input.q, tag, offset, limit);
-    if (json.headers?.code === 5 && ids[1]) json = await request(ids[1], input.q, tag, offset, limit);
+    const clientId = (process.env.ZITE_JAMENDO_CLIENT_ID || '').trim();
+    let json = await request(clientId, input.q, tag, offset, limit, true);
+    // Strict type filtering can empty out some genres; retry without it on the first page.
+    if (json.headers?.status === 'success' && !json.results?.length && offset === 0) json = await request(clientId, input.q, tag, offset, limit, false);
     return finish(json, key, offset, limit);
   },
 });
 
-async function request(clientId: string, rawQ: string | undefined, tag: string, offset: number, limit: number) {
+async function request(clientId: string, rawQ: string | undefined, tag: string, offset: number, limit: number, strict: boolean) {
     const q = (rawQ ?? '').trim();
     const params: Record<string, string> = {
       client_id: clientId, format: 'json', limit: String(limit), offset: String(offset),
-      audioformat: 'mp32', imagesize: '300', type: 'single albumtrack',
+      audioformat: 'mp32', imagesize: '300', include: 'licenses',
     };
+    if (strict) params.type = 'single albumtrack';
     if (q) { params.search = q; params.boost = 'popularity_month'; } else params.order = 'popularity_month';
-    if (tag) params.tags = tag;
+    if (tag) params.fuzzytags = tag;
     const url = new URL(API);
     Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
 
