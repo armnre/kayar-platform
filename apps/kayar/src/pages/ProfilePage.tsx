@@ -10,6 +10,7 @@ import { Skeleton } from '@project/components/ui/skeleton';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@project/components/ui/alert-dialog';
 import { useMe, useCatalog, useRefresh, fa, faDate, errMsg } from '../lib/data';
 import { RequireAuth, SectionTitle, Empty } from '../components/ui-kit';
+import { BodySummary, CoachStatusCard } from '../components/BodySummary';
 
 export default function ProfilePage() {
   return <RequireAuth title="برای دیدن پروفایل وارد شوید"><Inner /></RequireAuth>;
@@ -47,6 +48,9 @@ function Inner() {
         </div>
         {!p.onboarded && <Button asChild className="mt-5 rounded-full"><Link to="/bodyyar"><Zap className="ml-1 h-4 w-4" />تکمیل پروفایل بدنی</Link></Button>}
       </div>
+
+      <BodySummary me={data} />
+      <CoachStatusCard me={data} />
 
       <section>
         <SectionTitle title="درخواست‌های مربیگری" />

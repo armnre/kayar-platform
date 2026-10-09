@@ -20,6 +20,7 @@ export default createEndpoint({
       zite.coachPlans.findOne({ id: input.planId }),
     ]);
     if (!coach || coach.status !== 'تایید شده') throw new ZiteError({ code: 'NOT_FOUND', message: 'coach', userFacingMessage: 'مربی پیدا نشد.' });
+    if (coach.acceptingClients === false) throw new ZiteError({ code: 'BAD_REQUEST', message: 'full', userFacingMessage: 'ظرفیت این مربی فعلاً تکمیل است.' });
     if (!plan || !ids(plan.coach).includes(coach.id)) throw new ZiteError({ code: 'BAD_REQUEST', message: 'plan', userFacingMessage: 'پلن انتخاب‌شده معتبر نیست.' });
     if (new Date(input.sessionAt).getTime() < Date.now()) throw new ZiteError({ code: 'BAD_REQUEST', message: 'past', userFacingMessage: 'زمان جلسه باید در آینده باشد.' });
 

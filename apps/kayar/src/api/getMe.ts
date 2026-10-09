@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { createEndpoint } from 'zitejs/backend';
 import { zite } from 'zitejs/db';
-import { first } from '../server/util';
+import { first, ageFrom } from '../server/util';
+import { findMyCoach } from '../server/coach';
 import { aiConfigured } from '../server/ai';
 
 export default createEndpoint({
@@ -27,13 +28,15 @@ export default createEndpoint({
       zite.listeningProgress.findAll({ filters: { owner: uid }, limit: 500 }),
       zite.coaches.findAll({ limit: 500, fields: ['name'] as never }),
     ]);
+    const myCoach = await findMyCoach(uid);
     const coachName = new Map(coaches.records.map((c) => [c.id, c.name ?? '']));
     const p = profile!;
     return {
       aiReady: aiConfigured(),
+      coach: myCoach ? { id: myCoach.id, status: myCoach.status ?? '', name: myCoach.name ?? '' } : null,
       profile: {
         id: p.id, displayName: p.displayName ?? '', phone: p.phone ?? '', heightCm: p.heightCm ?? null, weightKg: p.weightKg ?? null,
-        age: p.age ?? null, gender: p.gender ?? '', goal: p.goal ?? '', level: p.level ?? '', equipment: p.equipment ?? '',
+        birthDate: p.birthDate ? p.birthDate.slice(0, 10) : null, age: ageFrom(p.birthDate), activityLevel: p.activityLevel ?? '', gender: p.gender ?? '', goal: p.goal ?? '', level: p.level ?? '', equipment: p.equipment ?? '',
         healthNotes: p.healthNotes ?? '', points: p.points ?? 0, onboarded: !!p.onboarded,
       },
       requests: requests.records
@@ -51,7 +54,8 @@ export default createEndpoint({
       listening: progress.records.map((x) => ({ id: x.id, contentId: first(x.content) ?? '', positionSeconds: x.positionSeconds ?? 0, saved: !!x.saved })),
     } as {
       aiReady: boolean;
-      profile: { id: string; displayName: string; phone: string; heightCm: number | null; weightKg: number | null; age: number | null; gender: string; goal: string; level: string; equipment: string; healthNotes: string; points: number; onboarded: boolean };
+      coach: { id: string; status: string; name: string } | null;
+      profile: { id: string; displayName: string; phone: string; heightCm: number | null; weightKg: number | null; birthDate: string | null; age: number | null; activityLevel: string; gender: string; goal: string; level: string; equipment: string; healthNotes: string; points: number; onboarded: boolean };
       requests: { id: string; title: string; status: string; message: string; sessionAt: string | null; coachId: string; coachName: string }[];
       plans: { id: string; title: string; content: string; source: string; status: string }[];
       activity: { id: string; title: string; date: string; durationMinutes: number; calories: number; weightKg: number | null; notes: string }[];

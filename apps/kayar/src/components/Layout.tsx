@@ -1,24 +1,29 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Home, Users, Headphones, Trophy, User, Zap, LogOut } from 'lucide-react';
+import { Home, Users, Headphones, Trophy, User, Zap, LogOut, MessagesSquare, BadgeCheck } from 'lucide-react';
+import { useConversations } from '../lib/chat';
+import { useMe } from '../lib/data';
 import { useAuth, loginWithRedirect, logout } from 'zitejs/auth';
 import { Button } from '@project/components/ui/button';
 import { Toaster } from '@project/components/ui/sonner';
 import { cn } from '@project/components/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from './Logo';
+import { PlayerProvider } from '../lib/player';
+import MiniPlayer from './morshed/MiniPlayer';
 
 const nav = [
   { to: '/home', label: 'خانه', icon: Home },
   { to: '/coaches', label: 'مربیان', icon: Users },
   { to: '/bodyyar', label: 'بدن‌یار', icon: Zap },
   { to: '/morshed', label: 'مرشد', icon: Headphones },
-  { to: '/rewards', label: 'جوایز', icon: Trophy },
+  { to: '/campaigns', label: 'کمپین‌ها', icon: Trophy },
 ];
 
 export default function Layout() {
   const { user } = useAuth();
   const loc = useLocation();
   return (
+    <PlayerProvider>
     <div dir="rtl" className="relative min-h-screen pb-28 md:pb-10">
       <div className="pointer-events-none fixed -top-40 right-0 h-[30rem] w-[30rem] rounded-full bg-primary/10 blur-[140px]" />
       <div className="pointer-events-none fixed bottom-0 left-0 h-[26rem] w-[26rem] rounded-full bg-accent/10 blur-[140px]" />
@@ -39,6 +44,8 @@ export default function Layout() {
           </nav>
           {user ? (
             <div className="flex items-center gap-2">
+              <CoachLink />
+              <MessagesLink />
               <NavLink to="/profile" className="flex items-center gap-2 rounded-full border border-white/10 py-1 pe-3 ps-1 text-sm transition hover:border-primary/50">
                 <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-black text-primary-foreground">{(user.firstName || user.email)[0]?.toUpperCase()}</span>
                 <span className="hidden sm:inline">پروفایل</span>
@@ -56,9 +63,11 @@ export default function Layout() {
           <Outlet />
         </motion.main>
       </AnimatePresence>
+      <MiniPlayer />
       <MobileNav />
       <Toaster position="top-center" />
     </div>
+    </PlayerProvider>
   );
 }
 
@@ -91,5 +100,26 @@ function MobileNav() {
         ))}
       </div>
     </nav>
+  );
+}
+
+function MessagesLink() {
+  const { data } = useConversations();
+  const n = data?.totalUnread ?? 0;
+  return (
+    <NavLink to="/messages" aria-label="پیام‌ها" className="relative grid h-10 w-10 place-items-center rounded-full border border-white/10 transition hover:border-primary/50">
+      <MessagesSquare className="h-4 w-4" />
+      {n > 0 && <span className="absolute -left-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-black text-primary-foreground">{n > 99 ? '۹۹+' : n.toLocaleString('fa-IR')}</span>}
+    </NavLink>
+  );
+}
+
+function CoachLink() {
+  const { data } = useMe();
+  if (!data?.coach) return null;
+  return (
+    <NavLink to="/coach" className="hidden h-10 items-center gap-1.5 rounded-full border border-accent/40 px-3 text-sm text-accent transition hover:bg-accent/10 sm:flex">
+      <BadgeCheck className="h-4 w-4" />پنل مربی
+    </NavLink>
   );
 }

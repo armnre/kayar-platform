@@ -1,6 +1,6 @@
 import { motion, useScroll, useSpring } from 'framer-motion';
 import LandingHero, { LandingNav, ModuleCards } from '../components/landing/LandingHero';
-import { BodyYarSection, CoachesSection, MorshedSection, GamesSection, ShopSection, StatsStrip, FinalCta, Footer } from '../components/landing/LandingSections';
+import { BodyYarSection, CoachesSection, MorshedSection, GamesSection, ShopSection, StatsStrip, FinalCta, Footer, CampaignsSection } from '../components/landing/LandingSections';
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
@@ -16,6 +16,7 @@ export default function LandingPage() {
         <ModuleCards />
         <BodyYarSection />
         <CoachesSection />
+        <CampaignsSection />
         <MorshedSection />
         <GamesSection />
         <StatsStrip />

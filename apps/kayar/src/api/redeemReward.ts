@@ -14,6 +14,13 @@ export default createEndpoint({
     ]);
     if (!reward) throw new ZiteError({ code: 'NOT_FOUND', message: 'reward', userFacingMessage: 'جایزه پیدا نشد.' });
     if ((reward.stock ?? 0) <= 0) throw new ZiteError({ code: 'BAD_REQUEST', message: 'stock', userFacingMessage: 'موجودی این جایزه تمام شده است.' });
+    if (reward.expiresOn && reward.expiresOn < new Date().toISOString().slice(0, 10)) throw new ZiteError({ code: 'BAD_REQUEST', message: 'expired', userFacingMessage: 'مهلت دریافت این جایزه تمام شده است.' });
+    const limit = reward.perUserLimit ?? 1;
+    if (limit > 0) {
+      const mine = await zite.rewardRedemptions.findAll({ filters: { owner: context.user.id }, limit: 1000 });
+      const used = mine.records.filter((r) => [r.reward].flat().includes(reward.id)).length;
+      if (used >= limit) throw new ZiteError({ code: 'BAD_REQUEST', message: 'limit', userFacingMessage: 'سقف دریافت این جایزه برای شما پر شده است.' });
+    }
     const cost = reward.costPoints ?? 0;
     if (!profile || (profile.points ?? 0) < cost) throw new ZiteError({ code: 'BAD_REQUEST', message: 'points', userFacingMessage: 'امتیاز شما کافی نیست.' });
     const code = 'KAYAR-' + Math.random().toString(36).slice(2, 8).toUpperCase();
