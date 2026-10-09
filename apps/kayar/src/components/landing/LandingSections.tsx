@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Bot, Dumbbell, Salad, LineChart, MessageCircle, QrCode, UserCog, Activity, Star, Play, SkipBack, SkipForward, Heart, Gift, Tag, Shirt, Crown, Users, Smile, Target, ChevronLeft } from 'lucide-react';
 import { useCatalog } from '../../lib/data';
 import SafeImg from '../SafeImg';
+import CampaignCard from '../campaigns/CampaignCard';
 
 const rv = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' }, transition: { duration: 0.6 } };
 const Panel = ({ id, children, className = '' }: { id?: string; children: React.ReactNode; className?: string }) => (
@@ -100,7 +101,7 @@ export function CoachesSection() {
           <Crown className="h-8 w-8 text-accent" />
           <div className="mt-3 text-xl font-black">مربی هستی؟ به کایار بپیوند</div>
           <p className="mt-2 text-sm leading-7 text-muted-foreground">پروفایلت رو بساز، شاگرد جذب کن و برنامه‌هات رو بفروش. (تأیید توسط تیم کایار)</p>
-          <Link to="/app" className="mt-5 inline-block rounded-full bg-primary px-6 py-2.5 text-sm font-black text-primary-foreground">ثبت‌نام به عنوان مربی</Link>
+          <div className="mt-5 flex flex-wrap gap-2"><Link to="/coach/login" className="inline-block rounded-full bg-accent px-6 py-2.5 text-sm font-black text-accent-foreground">درخواست همکاری مربی</Link><Link to="/coach/login" className="inline-block rounded-full border border-white/20 px-5 py-2.5 text-sm font-bold">ورود مربیان</Link></div>
         </div>
       </div>
     </Panel>
@@ -221,7 +222,10 @@ export function FinalCta() {
       <div className="relative max-w-xl p-8 md:p-12">
         <h2 className="text-3xl font-black md:text-4xl">آماده‌ای برای <span className="text-primary">نسخه‌ی بهتر خودت؟</span></h2>
         <p className="mt-3 text-muted-foreground">با کایار، قدم‌به‌قدم به سمت سلامتی، قدرت و اعتمادبه‌نفس.</p>
-        <Link to="/app" className="mt-6 inline-block rounded-full bg-primary px-8 py-3.5 font-black text-primary-foreground shadow-[0_10px_40px_-8px_hsl(var(--primary))]">برنامه‌ام رو بساز</Link>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link to="/app" className="inline-block rounded-full bg-primary px-8 py-3.5 font-black text-primary-foreground shadow-[0_10px_40px_-8px_hsl(var(--primary))]">برنامه‌ام رو بساز</Link>
+          <Link to="/coach/login" className="inline-block rounded-full border border-white/20 px-8 py-3.5 font-bold transition hover:border-primary hover:text-primary">مربی هستم؛ درخواست عضویت</Link>
+        </div>
       </div>
     </motion.section>
   );
@@ -235,5 +239,20 @@ export function Footer() {
         <nav className="flex gap-5">{[['درباره ما', '#'], ['تماس با ما', 'mailto:support@kayar.app'], ['قوانین', '#'], ['ورود به اپ', '/app']].map(([l, h]) => h.startsWith('/') ? <Link key={l} to={h} className="hover:text-primary">{l}</Link> : <a key={l} href={h} className="hover:text-primary">{l}</a>)}</nav>
       </div>
     </footer>
+  );
+}
+
+export function CampaignsSection() {
+  const { data } = useCatalog();
+  const items = (data?.campaigns ?? []).filter((c) => !c.placement.length || c.placement.includes('لندینگ') || c.placement.includes('بنر برجسته')).slice(0, 3);
+  if (!items.length) return null;
+  return (
+    <Panel id="campaigns">
+      <div className="mb-6 flex items-end justify-between gap-4">
+        <div><h2 className="text-3xl font-black text-primary md:text-4xl">کمپین‌ها و حامیان</h2><p className="mt-1 text-sm text-muted-foreground">با برندهای ورزشی در چالش‌ها شرکت کن و پاداش واقعی بگیر</p></div>
+        <Link to="/campaigns" className="flex shrink-0 items-center gap-1 text-sm font-bold text-primary">همه کمپین‌ها<ChevronLeft className="h-4 w-4" /></Link>
+      </div>
+      <div className="grid gap-4 md:grid-cols-3">{items.map((c) => <CampaignCard key={c.id} c={c} />)}</div>
+    </Panel>
   );
 }

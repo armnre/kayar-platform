@@ -1,5 +1,5 @@
 {
-  "name": "kayar-platform",
+  "name": "repository-cloner",
   "private": true,
   "workspaces": [
     "apps/*",

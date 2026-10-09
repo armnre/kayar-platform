@@ -1,12 +1,12 @@
 {
   "project": {
-    "name": "Kayar Platform",
-    "basePublicIdentifier": "904c868c629fb89a"
+    "name": "Repository Cloner",
+    "basePublicIdentifier": "12d7652bc92c45f9"
   },
   "integrations": {
     "github": {
       "type": "github",
-      "connectionId": "svc_559280"
+      "connectionId": "svc_559345"
     }
   }
 }

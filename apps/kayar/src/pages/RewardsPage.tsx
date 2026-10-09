@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Trophy, Gift, Megaphone, Plus, Check, Loader2, Coins } from 'lucide-react';
 import { useAuth, loginWithRedirect } from 'zitejs/auth';
@@ -10,27 +11,27 @@ import { useCatalog, useMe, useRefresh, fa, faDate, errMsg } from '../lib/data';
 import { PageHeader, SectionTitle, CardsSkeleton, Empty } from '../components/ui-kit';
 import SafeImg from '../components/SafeImg';
 
-export default function RewardsPage() {
+export default function RewardsPage({ embedded }: { embedded?: boolean }) {
   const { data, isLoading } = useCatalog();
   const me = useMe();
   const points = me.data?.profile.points ?? 0;
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <PageHeader title="چالش و" accent="جایزه" sub="در چالش‌ها شرکت کن، امتیاز بگیر و جایزه ببر." />
+        <PageHeader title={embedded ? 'چالش‌ها و' : 'چالش و'} accent="جایزه" sub="در چالش‌ها شرکت کن، امتیاز بگیر و جایزه ببر." />
         {me.data && <div className="glass glow flex items-center gap-3 rounded-2xl px-5 py-3"><Coins className="h-6 w-6 text-primary" /><div><div className="text-[11px] text-muted-foreground">امتیاز شما</div><div className="text-2xl font-black text-primary">{fa(points)}</div></div></div>}
       </div>
       {isLoading ? <CardsSkeleton /> : (
         <>
-          {data!.campaigns.length > 0 && (
+          {!embedded && data!.campaigns.length > 0 && (
             <section>
               <SectionTitle title="کمپین‌های فعال" />
               <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4">
                 {data!.campaigns.map((c) => (
-                  <div key={c.id} className="glass relative w-72 shrink-0 snap-start overflow-hidden rounded-2xl md:w-80">
+                  <Link to={`/campaigns/${c.id}`} key={c.id} className="glass relative w-72 shrink-0 snap-start overflow-hidden rounded-2xl md:w-80">
                     <SafeImg src={c.coverUrl} alt={c.title} className="h-32 w-full object-cover" fallback={<div className="grid h-32 place-items-center bg-gradient-to-br from-primary/25 via-card to-accent/30"><Megaphone className="h-10 w-10 text-primary" /></div>} />
                     <div className="p-4"><div className="text-[11px] text-primary">{c.brand}</div><div className="font-bold">{c.title}</div><p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{c.description}</p>{c.endsOn && <div className="mt-2 text-[11px] text-muted-foreground">تا {faDate(c.endsOn)}</div>}</div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -54,7 +55,7 @@ export default function RewardsPage() {
 }
 
 type Ch = NonNullable<ReturnType<typeof useCatalog>['data']>['challenges'][number];
-function ChallengeCard({ c, part }: { c: Ch; part?: { progress: number; completed: boolean } }) {
+export function ChallengeCard({ c, part }: { c: Ch; part?: { progress: number; completed: boolean } }) {
   const { user } = useAuth();
   const refresh = useRefresh();
   const [amt, setAmt] = useState('');
@@ -91,7 +92,7 @@ function ChallengeCard({ c, part }: { c: Ch; part?: { progress: number; complete
 }
 
 type Rw = NonNullable<ReturnType<typeof useCatalog>['data']>['rewards'][number];
-function RewardCard({ r, points }: { r: Rw; points: number }) {
+export function RewardCard({ r, points }: { r: Rw; points: number }) {
   const { user } = useAuth();
   const refresh = useRefresh();
   const [busy, setBusy] = useState(false);
@@ -106,7 +107,11 @@ function RewardCard({ r, points }: { r: Rw; points: number }) {
       <div className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-accent/15 text-accent"><Gift className="h-5 w-5" /></div>
       <div className="text-sm font-bold">{r.title}</div>
       <p className="mt-1 line-clamp-2 flex-1 text-[11px] text-muted-foreground">{r.description}</p>
-      <div className="mt-2 text-xs text-muted-foreground">{r.stock > 0 ? `موجودی ${fa(r.stock)}` : 'ناموجود'}</div>
+      <div className="mt-2 space-y-0.5 text-[11px] text-muted-foreground">
+        <div>{r.kind && `${r.kind} · `}{r.stock > 0 ? `موجودی ${fa(r.stock)}` : 'ناموجود'}</div>
+        {r.perUserLimit > 0 && <div>حداکثر {fa(r.perUserLimit)} بار برای هر نفر</div>}
+        {r.expiresOn && <div>مهلت دریافت تا {faDate(r.expiresOn)}</div>}
+      </div>
       <Button size="sm" disabled={busy || r.stock <= 0 || (!!user && points < r.costPoints)} onClick={redeem} className="mt-3 rounded-xl font-bold">{fa(r.costPoints)} امتیاز</Button>
     </div>
   );

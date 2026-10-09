@@ -1,3 +1,4 @@
+import { ageFrom } from '../server/util';
 import { z } from 'zod';
 import { createEndpoint, ZiteError } from 'zitejs/backend';
 import { zite } from 'zitejs/db';
@@ -16,7 +17,7 @@ export default createEndpoint({
         { role: 'system', content: SAFETY_PROMPT },
         {
           role: 'user',
-          content: `یک برنامه تمرینی ${input.daysPerWeek} روزه در هفته بساز برای: هدف ${profile.goal}، سطح ${profile.level}، امکانات ${profile.equipment}، سن ${profile.age}، وزن ${profile.weightKg}، ملاحظات: ${profile.healthNotes || 'ندارد'}.
+          content: `یک برنامه تمرینی ${input.daysPerWeek} روزه در هفته بساز برای: هدف ${profile.goal}، سطح ${profile.level}، امکانات ${profile.equipment}، سن ${ageFrom(profile.birthDate) ?? '?'}، وزن ${profile.weightKg}، ملاحظات: ${profile.healthNotes || 'ندارد'}.
 فقط JSON با این ساختار برگردان: {"title": string, "days": [{"name": string, "focus": string, "exercises": [{"name": string, "sets": number, "reps": string, "rest": string}]}], "notes": string}`,
         },
       ],

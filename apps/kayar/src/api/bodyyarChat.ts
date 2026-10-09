@@ -1,3 +1,4 @@
+import { ageFrom } from '../server/util';
 import { z } from 'zod';
 import { createEndpoint } from 'zitejs/backend';
 import { zite } from 'zitejs/db';
@@ -16,7 +17,7 @@ export default createEndpoint({
     ]);
     const recent = history.records.sort((a, b) => (a.created ?? '').localeCompare(b.created ?? '')).slice(-12);
     const about = profile
-      ? `پروفایل کاربر: قد ${profile.heightCm ?? '?'}، وزن ${profile.weightKg ?? '?'}، سن ${profile.age ?? '?'}، جنسیت ${profile.gender ?? '?'}، هدف ${profile.goal ?? '?'}، سطح ${profile.level ?? '?'}، امکانات ${profile.equipment ?? '?'}، ملاحظات سلامتی: ${profile.healthNotes || 'ندارد'}`
+      ? `پروفایل کاربر: قد ${profile.heightCm ?? '?'}، وزن ${profile.weightKg ?? '?'}، سن ${ageFrom(profile.birthDate) ?? '?'}، جنسیت ${profile.gender ?? '?'}، هدف ${profile.goal ?? '?'}، سطح ${profile.level ?? '?'}، امکانات ${profile.equipment ?? '?'}، ملاحظات سلامتی: ${profile.healthNotes || 'ندارد'}`
       : '';
     const reply = await chatCompletion([
       { role: 'system', content: `${SAFETY_PROMPT}\n${about}` },

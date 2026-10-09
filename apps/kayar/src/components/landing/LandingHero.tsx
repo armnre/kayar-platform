@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Logo from '../Logo';
 
 const IMG = 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/ehiCe6mR6VKtYGiUcxJA6q/img_XqWVTvQkpFraQZTO.jpg';
-const NAV = [['بدن‌یار', '#bodyyar'], ['مربیان', '#coaches'], ['مرشد', '#morshed'], ['بازی', '#games'], ['فروشگاه کایوش', '#shop']];
+const NAV = [['بدن‌یار', '#bodyyar'], ['مربیان', '#coaches'], ['مرشد', '#morshed'], ['کمپین‌ها', '#campaigns'], ['بازی', '#games'], ['فروشگاه کایوش', '#shop']];
 
 export function LandingNav() {
   const [open, setOpen] = useState(false);
@@ -15,11 +15,12 @@ export function LandingNav() {
         <Logo />
         <nav className="hidden gap-8 text-sm text-muted-foreground lg:flex">{NAV.map(([l, h]) => <a key={h} href={h} className="transition hover:text-primary">{l}</a>)}</nav>
         <div className="flex items-center gap-2">
+          <Link to="/coach/login" className="hidden rounded-full border border-white/15 px-4 py-2 text-sm transition hover:border-primary hover:text-primary sm:inline-flex">ورود مربیان</Link>
           <Link to="/app" className="rounded-full bg-primary px-5 py-2 text-sm font-black text-primary-foreground shadow-[0_0_24px_-4px_hsl(var(--primary))] transition hover:scale-105">ورود / ثبت‌نام</Link>
           <button onClick={() => setOpen(!open)} className="grid h-10 w-10 place-items-center rounded-full border border-white/10 lg:hidden" aria-label="منو"><Menu className="h-5 w-5" /></button>
         </div>
       </div>
-      {open && <nav className="flex flex-col gap-1 border-t border-white/5 p-4 lg:hidden">{NAV.map(([l, h]) => <a key={h} href={h} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/5">{l}</a>)}</nav>}
+      {open && <nav className="flex flex-col gap-1 border-t border-white/5 p-4 lg:hidden">{NAV.map(([l, h]) => <a key={h} href={h} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/5">{l}</a>)}<Link to="/coach/login" className="rounded-xl px-3 py-3 font-bold text-primary hover:bg-white/5">ورود و درخواست همکاری مربیان</Link></nav>}
     </header>
   );
 }

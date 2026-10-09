@@ -12,6 +12,14 @@ export default createEndpoint({
     const uid = context.user.id;
     const ch = await zite.challenges.findOne({ id: input.challengeId });
     if (!ch?.active) throw new ZiteError({ code: 'NOT_FOUND', message: 'challenge', userFacingMessage: 'این چالش فعال نیست.' });
+    const today = new Date().toISOString().slice(0, 10);
+    if (ch.endsOn && ch.endsOn < today) throw new ZiteError({ code: 'BAD_REQUEST', message: 'ended', userFacingMessage: 'مهلت این چالش به پایان رسیده است.' });
+    const campId = first(ch.campaign);
+    if (campId) {
+      const camp = await zite.campaigns.findOne({ id: campId });
+      const live = camp?.status === 'فعال' && (!camp.startsOn || camp.startsOn <= today) && (!camp.endsOn || camp.endsOn >= today);
+      if (!live) throw new ZiteError({ code: 'BAD_REQUEST', message: 'campaign closed', userFacingMessage: 'کمپین این چالش در حال حاضر فعال نیست.' });
+    }
     const mine = await zite.challengeParticipations.findAll({ filters: { owner: uid }, limit: 500 });
     let part = mine.records.find((p) => first(p.challenge) === ch.id);
     if (!part) {
@@ -19,7 +27,9 @@ export default createEndpoint({
     }
     if (part.completed || !input.add) return { progress: part.progress ?? 0, completed: !!part.completed, awarded: 0 };
     const target = ch.target ?? 1;
-    const progress = Math.min(target, (part.progress ?? 0) + input.add);
+    // A single report can't exceed a quarter of the target — limits one-shot farming.
+    const step = Math.min(input.add, Math.max(1, Math.ceil(target / 4)));
+    const progress = Math.min(target, (part.progress ?? 0) + step);
     const completed = progress >= target;
     await zite.challengeParticipations.update({ id: part.id, record: { progress, completed } as never });
     let awarded = 0;
