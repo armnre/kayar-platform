@@ -1,7 +1,7 @@
 // Browser E2E for /app routing (coach/admin/user, status transitions, mock chat/rewards).
-// Run: npx vite build && npx vite preview --port 4173 & then: node tests/e2e-routing.cjs (needs 'playwright' + chromium).
+// Run: npm run test:e2e:ci  (build + preview + tests). Needs once: npx playwright install chromium. Exit code 1 if any test fails.
 const { chromium } = require('playwright');
-const B = 'http://localhost:4173';
+const B = process.env.E2E_BASE_URL || 'http://localhost:4173';
 const results = []; const errors = [];
 const ok = (name, cond, extra='') => { results.push(`${cond ? 'PASS' : 'FAIL'}  ${name}${extra ? '  — ' + extra : ''}`); };
 const path = (p) => new URL(p.url()).pathname;
@@ -144,6 +144,16 @@ async function roleLogin(p, url, phone) {
   await u.goto(B + '/app/coach/login'); await settle(u);
   ok('signed-in user can open coach login to switch role', path(u) === '/app/coach/login', path(u));
   // legacy URLs
+  const convPath = '/app/messages/demo-coach-1__9123334444';
+  await u.goto(B + '/messages/demo-coach-1__9123334444'); await settle(u);
+  ok('legacy /messages/:id keeps conversation id', path(u) === convPath && (await u.content()).includes('سلام تست'), path(u));
+  await u.goto(B + '/morshed/demo-audio-1'); await settle(u, 1500);
+  ok('legacy /morshed/:id → /app/morshed/:id', path(u) === '/app/morshed/demo-audio-1', path(u));
+  ok('morshed detail opens the linked item in the player', (await u.locator('text=انگیزه برای ادامه').count()) >= 2);
+  await u.goto(B + '/app/morshed/no-such-item'); await settle(u, 1500);
+  ok('unknown morshed id shows 404 (no white page)', !(await blank(u)) && (await u.content()).includes('بازگشت به صفحه اصلی'));
+  await u.goto(B + '/app/morshed'); await settle(u, 1200);
+  ok('morshed list still renders', (await u.content()).includes('انگیزه برای ادامه'));
   for (const [l, exp] of [['/messages', '/app/messages'], ['/coach/login', '/app/coach/login'], ['/coaches/demo-coach-2', '/app/coaches/demo-coach-2'], ['/home', '/app/home']]) {
     await u.goto(B + l); await settle(u);
     ok(`legacy ${l} → ${exp}`, path(u) === exp, path(u));
@@ -153,6 +163,15 @@ async function roleLogin(p, url, phone) {
   await u.goto(B + '/app/does-not-exist'); await settle(u);
   ok('unknown /app route shows 404 screen (no white page)', !(await blank(u)));
   ok('no redirect loop (navigation count sane)', navCount < 200, String(navCount));
-  console.log(results.join('\n')); console.log('\nERRORS:', errors.length ? '\n' + [...new Set(errors)].join('\n') : 'none');
+  // signed-out deep link to a legacy conversation survives login
+  const g = await (await br.newContext()).newPage();
+  await g.goto(B + '/app'); await g.evaluate(() => localStorage.setItem('kayar.mobile.v1', JSON.stringify({ onboarded: true })));
+  await g.goto(B + '/messages/abc123'); await settle(g);
+  ok('signed-out legacy /messages/:id → login with next=/app/messages/:id', path(g) === '/app/login' && decodeURIComponent(g.url()).includes('next=/app/messages/abc123'), g.url().replace(B, ''));
   await br.close();
+  const pass = results.filter(r => r.startsWith('PASS')).length, fail = results.length - pass, errs = [...new Set(errors)];
+  console.log(results.join('\n'));
+  console.log('\nERRORS:', errs.length ? '\n' + errs.join('\n') : 'none');
+  console.log(`\nSUMMARY: ${pass} passed, ${fail} failed, ${errs.length} browser errors`);
+  process.exitCode = fail || errs.length ? 1 : 0;
 })().catch(e => { console.log(results.join('\n')); console.log('CRASH', e.message); process.exit(1); });

@@ -1,4 +1,6 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import NotFound from './NotFound';
 import { motion } from 'framer-motion';
 import { Play, Pause, Heart, Headphones, Music, Search } from 'lucide-react';
 import { toast } from 'sonner';
@@ -22,6 +24,10 @@ export default function MorshedScreen() {
   const [playing, setPlaying] = useState(false);
   const [t, setT] = useState(0);
   const el = useRef<HTMLAudioElement>(null);
+  // /app/morshed/:id deep link → open that item in the player (no autoplay; browsers block it anyway).
+  const { id } = useParams();
+  const linked = id ? data?.audio.find((a) => a.id === id) : undefined;
+  useEffect(() => { if (linked) { setCur(linked); setTab(isMusic(linked) ? 'music' : 'pod'); } }, [linked?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const list = useMemo(() => (data?.audio ?? []).filter((a) =>
     (tab === 'liked' ? liked.includes(a.id) : tab === 'music' ? isMusic(a) : !isMusic(a)) && a.title.includes(q)), [data, tab, q, liked]);
@@ -32,6 +38,7 @@ export default function MorshedScreen() {
     setTimeout(() => el.current?.play().catch(() => { setPlaying(false); toast.error('فایل صوتی هنوز بارگذاری نشده است.'); }), 50);
   };
   const like = (id: string) => setSession({ liked: liked.includes(id) ? liked.filter((x) => x !== id) : [...liked, id] });
+  if (id && !isLoading && !linked) return <NotFound />;
   const dur = cur?.durationSeconds || el.current?.duration || 1;
 
   return (

@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "npx tsgo --noEmit -p tsconfig.app.json --pretty"
+    "typecheck": "npx tsgo --noEmit -p tsconfig.app.json --pretty",
+    "test:e2e": "node tests/e2e-routing.cjs",
+    "test:e2e:ci": "vite build && node tests/run-e2e.mjs"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "2.45.6",
@@ -92,8 +94,8 @@
     "tiptap-markdown": "^0.9.0",
     "use-debounce": "10.0.6",
     "vite-plugin-insert-html": "^1.0.3",
-    "zod": "3.24.2",
-    "zitejs": "0.9.135"
+    "zitejs": "0.9.135",
+    "zod": "3.24.2"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "0.72.1",
@@ -124,6 +126,7 @@
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.21",
     "cross-env": "^10.1.0",
+    "dropbox": "10.47.0",
     "estree-walker": "^3.0.3",
     "globals": "^15.15.0",
     "googleapis": "171.2.0",
@@ -131,6 +134,7 @@
     "jsforce": "3.10.14",
     "magic-string": "^0.30.17",
     "openai": "6.29.0",
+    "playwright": "^1.47.2",
     "postcss": "^8.5.3",
     "resend": "6.25.0",
     "slackify-markdown": "5.0.0",
@@ -138,8 +142,7 @@
     "tailwindcss": "^3.4.17",
     "twilio": "5.13.0",
     "typescript": "~5.7.3",
-    "vite": "^8.1.0",
-    "dropbox": "10.47.0"
+    "vite": "^8.1.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

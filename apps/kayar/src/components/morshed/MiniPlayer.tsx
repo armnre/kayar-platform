@@ -8,7 +8,7 @@ import Cover from './Cover';
 export default function MiniPlayer() {
   const p = usePlayer();
   const loc = useLocation();
-  const hidden = !p.current || loc.pathname === `/morshed/${p.current.id}`;
+  const hidden = !p.current || loc.pathname === `/app/morshed/${p.current.id}`;
   const pct = p.dur ? (p.t / p.dur) * 100 : 0;
   return (
     <AnimatePresence>

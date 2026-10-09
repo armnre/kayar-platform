@@ -10,15 +10,16 @@ import RewardsPage from './pages/RewardsPage';
 /** Old web URLs → their single home inside /app (kept so bookmarks & shared links keep working). */
 const LEGACY: [string, string][] = [
   ['/welcome', '/app'], ['/login', '/app/login'], ['/home', '/app/home'], ['/profile', '/app/profile'],
-  ['/coaches', '/app/coaches'], ['/bodyyar', '/app/bodyyar'], ['/morshed', '/app/morshed'], ['/morshed/:id', '/app/morshed'],
-  ['/messages', '/app/messages'], ['/messages/:id', '/app/messages'], ['/coach/dashboard', '/app/coach/dashboard'], ['/coach/messages', '/app/coach/messages'],
+  ['/coaches', '/app/coaches'], ['/bodyyar', '/app/bodyyar'], ['/morshed', '/app/morshed'],
+  ['/messages', '/app/messages'], ['/coach/dashboard', '/app/coach/dashboard'], ['/coach/messages', '/app/coach/messages'],
   ['/coach', '/app/coach'], ['/coach/login', '/app/coach/login'], ['/coach/apply', '/app/coach/apply'],
   ['/admin', '/app/admin'], ['/admin/login', '/app/admin/login'],
 ];
 
-function CoachRedirect() {
+/** Legacy detail URLs: keep the id (and query string) when moving into /app. */
+function WithId({ to }: { to: string }) {
   const { id } = useParams();
-  return <Navigate to={`/app/coaches/${id}`} replace />;
+  return <Navigate to={`${to}/${encodeURIComponent(id ?? '')}${window.location.search}`} replace />;
 }
 
 /**
@@ -39,7 +40,9 @@ export default function App() {
           <Route path="/campaigns/:id" element={<CampaignDetailPage />} />
           <Route path="/rewards" element={<RewardsPage />} />
         </Route>
-        <Route path="/coaches/:id" element={<CoachRedirect />} />
+        <Route path="/coaches/:id" element={<WithId to="/app/coaches" />} />
+        <Route path="/messages/:id" element={<WithId to="/app/messages" />} />
+        <Route path="/morshed/:id" element={<WithId to="/app/morshed" />} />
         {LEGACY.map(([from, to]) => <Route key={from} path={from} element={<Navigate to={to} replace />} />)}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

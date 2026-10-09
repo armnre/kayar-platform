@@ -36,3 +36,12 @@ Uses any OpenAI-compatible provider, keys kept server-side only: set secret ZITE
 
 ## Routing & roles (test mode)
 Everything lives under /app with one test session (phone + code 123456) and a role: athlete, coach or admin. Athletes sign in at /app/login, coaches at /app/coach/login (then land on apply / status / dashboard depending on approval), admins at /app/admin/login (test number 09120000000). Each area is closed to the other roles. The public site is / plus /campaigns and /rewards; old web URLs redirect into /app.
+
+## Test-mode data: local storage only
+In test mode the session, coach applications, chat, challenge progress, points and reward codes are stored in the browser's localStorage (`kayar.mobile.v1`, `kayar.demo.coachApps.v1`, `kayar.demo.data.v1`). That means:
+- Data lives on one browser profile only. It is **not** shared between different browsers, devices, incognito windows or users — e.g. an admin approving a coach in another browser is not seen by that coach.
+- Tabs of the same browser profile do sync (via the `storage` event), so admin and coach can be tested side by side in two tabs, but only one role is signed in per profile at a time.
+- Clearing site data resets everything. Sample content (ids starting with `demo-`) fills empty catalog sections.
+No real SMS, payment, AI or server-side sync is connected; real services can replace these stores later without changing routes.
+
+E2E: `npm run test:e2e:ci` (build + preview + browser tests; first run `npx playwright install chromium`). Any failing test exits with code 1.
