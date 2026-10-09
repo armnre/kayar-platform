@@ -2,7 +2,7 @@
 // Run: npm run test:e2e:ci  (build + preview + tests). Needs once: npx playwright install chromium. Exit code 1 if any test fails.
 const { chromium } = require('playwright');
 const B = process.env.E2E_BASE_URL || 'http://localhost:4173';
-const results = []; const errors = [];
+const results = []; const errors = [];  // SKIP lines are not counted as PASS
 const ok = (name, cond, extra='') => { results.push(`${cond ? 'PASS' : 'FAIL'}  ${name}${extra ? '  — ' + extra : ''}`); };
 const path = (p) => new URL(p.url()).pathname;
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
@@ -24,7 +24,7 @@ async function roleLogin(p, url, phone) {
   let navCount = 0; p.on('framenavigated', f => { if (f === p.mainFrame()) navCount++; });
 
   // Guards while signed out
-  for (const [u, exp] of [['/app/coach/dashboard', '/app/coach/login'], ['/app/admin', '/app/admin/login'], ['/app/home', '/app/welcome|/app/login'], ['/app/messages', '/app/login']]) {
+  for (const [u, exp] of [['/app/coach/dashboard', '/app/coach/login'], ['/app/home', '/app/welcome|/app/login'], ['/app/messages', '/app/login']]) {
     await p.goto(B + u); await settle(p);
     ok(`signed-out ${u} → ${exp}`, new RegExp('^(' + exp + ')$').test(path(p)), path(p) + new URL(p.url()).search);
   }
@@ -43,54 +43,50 @@ async function roleLogin(p, url, phone) {
   await p.reload(); await settle(p);
   ok('refresh keeps pending coach on status', path(p) === '/app/coach/status', path(p));
 
-  // Admin in a second tab
-  const a = await ctx.newPage();
-  a.on('pageerror', e => errors.push('pageerror(admin) ' + e.message));
-  await a.goto(B + '/app/admin/login'); await wait(1000);
-  // signed in as coach in same browser -> login form shown for switching? Admin uses separate localStorage session, so use a separate context instead
-  await a.close();
-  const actx = await br.newContext({ viewport: { width: 400, height: 860 } });
-  // share coach applications: copy apps store into admin context
-  const appsJson = await p.evaluate(() => localStorage.getItem('kayar.demo.coachApps.v1'));
-  const ap = await actx.newPage(); ap.on('pageerror', e => errors.push('pageerror(admin) ' + e.message));
-  await ap.goto(B + '/app'); await ap.evaluate(v => localStorage.setItem('kayar.demo.coachApps.v1', v), appsJson);
-  await roleLogin(ap, '/app/admin/login', '9120000000');
-  ok('admin login → /app/admin', path(ap) === '/app/admin', path(ap));
-  ok('admin sees coach request', (await ap.content()).includes('مربی تست'));
-  await ap.reload(); await settle(ap);
-  ok('refresh keeps admin on /app/admin', path(ap) === '/app/admin', path(ap));
-
-  // status transitions driven by admin (apply admin's store to coach's browser each time)
-  const sync = async () => { const v = await ap.evaluate(() => localStorage.getItem('kayar.demo.coachApps.v1')); await p.evaluate(v => localStorage.setItem('kayar.demo.coachApps.v1', v), v); await p.goto(B + '/app/coach'); await settle(p); };
-  const trans = [['نیاز به اصلاح', '/app/coach/apply'], ['رد', '/app/coach/status'], ['تعلیق', '/app/coach/status'], ['تأیید', '/app/coach/dashboard']];
-  for (const [btn, exp] of trans) {
-    await ap.click(`button:text-is("${btn}")`); await settle(ap, 500); await sync();
-    ok(`admin "${btn}" → coach lands on ${exp}`, path(p) === exp, path(p));
+  // Coach status transitions (test-mode store; the admin panel's "پرونده‌های آزمایشی" page writes the same store)
+  const setStatus = async (st) => { await p.evaluate((st) => { const k = 'kayar.demo.coachApps.v1'; const v = JSON.parse(localStorage.getItem(k) || '{}'); for (const x of Object.values(v)) { x.status = st; x.updatedAt = Date.now(); } localStorage.setItem(k, JSON.stringify(v)); }, st); await p.goto(B + '/app/coach'); await settle(p); };
+  for (const [st, exp] of [['changes', '/app/coach/apply'], ['rejected', '/app/coach/status'], ['suspended', '/app/coach/status'], ['approved', '/app/coach/dashboard']]) {
+    await setStatus(st);
+    ok(`coach status "${st}" → ${exp}`, path(p) === exp, path(p));
   }
   await p.goto(B + '/app/coach/apply'); await settle(p);
   ok('approved coach /apply → dashboard', path(p) === '/app/coach/dashboard', path(p));
-  await p.goto(B + '/app/coach/status'); await settle(p);
-  ok('approved coach /status → dashboard', path(p) === '/app/coach/dashboard', path(p));
   await p.reload(); await settle(p);
   ok('refresh keeps approved coach on dashboard', path(p) === '/app/coach/dashboard', path(p));
   await p.goto(B + '/app/home'); await settle(p);
   ok('coach opening user area → own home', path(p) === '/app/coach/dashboard', path(p));
-  await p.goto(B + '/app/admin'); await settle(p);
-  ok('coach opening admin → own home', path(p) === '/app/coach/dashboard', path(p));
-  // changes -> resubmit -> pending
-  await ap.click('button:text-is("نیاز به اصلاح")'); await settle(ap, 400); await sync();
+  await p.goto(B + '/admin/coaches'); await settle(p);
+  ok('coach opening /admin → admin login (no access)', path(p) === '/admin/login', path(p));
+  await setStatus('changes');
   await p.click('button:has-text("ارسال برای بررسی")'); await settle(p);
   ok('needs-correction coach resubmits → status (pending)', path(p) === '/app/coach/status' && (await p.content()).includes('در انتظار تأیید'), path(p));
-  // coach logout
   await p.click('button[aria-label="خروج"]'); await settle(p);
   ok('coach logout → /app/coach/login', path(p) === '/app/coach/login', path(p));
   await p.goto(B + '/app/coach/dashboard'); await settle(p);
   ok('after logout dashboard is guarded', path(p) === '/app/coach/login', path(p));
-  // admin logout
-  await ap.click('button[aria-label="خروج"]'); await settle(ap);
-  ok('admin logout → /app/admin/login', path(ap) === '/app/admin/login', path(ap));
-  await ap.fill('input[aria-label="شماره موبایل"]', '9121111111'); await ap.click('button[type=submit]'); await settle(ap, 800);
-  ok('non-admin phone rejected on admin login', path(ap) === '/app/admin/login' && (await ap.content()).includes('دسترسی به این بخش ندارد') && (await ap.locator('input[aria-label="کد تأیید"]').count()) === 0, path(ap));
+
+  // Admin panel at /admin (username + password). Login needs the backend: set E2E_WITH_BACKEND=1 against a deployed URL.
+  const ap = await (await br.newContext({ viewport: { width: 1280, height: 860 } })).newPage();
+  ap.on('pageerror', e => errors.push('pageerror(admin) ' + e.message));
+  for (const u of ['/admin', '/admin/dashboard', '/admin/rewards', '/app/admin']) {
+    await ap.goto(B + u); await settle(ap);
+    ok(`signed-out ${u} → /admin/login`, path(ap) === '/admin/login', path(ap));
+  }
+  ok('admin login form has username + password', (await ap.locator('#u').count()) === 1 && (await ap.locator('input[type=password]').count()) === 1);
+  if (process.env.E2E_WITH_BACKEND) {
+    await ap.fill('#u', 'admin'); await ap.fill('#p', 'wrong-pass'); await ap.click('button[type=submit]'); await settle(ap, 1500);
+    ok('wrong admin password rejected', path(ap) === '/admin/login' && (await ap.locator('[role=alert]').count()) === 1, path(ap));
+    await ap.fill('#p', process.env.E2E_ADMIN_PASSWORD || 'kayar-test-1234'); await ap.click('button[type=submit]'); await settle(ap, 2000);
+    ok('admin login → /admin/dashboard', path(ap) === '/admin/dashboard', path(ap));
+    await ap.goto(B + '/admin/campaigns'); await settle(ap);
+    ok('deep /admin/campaigns opens when signed in', path(ap) === '/admin/campaigns', path(ap));
+    await ap.reload(); await settle(ap);
+    ok('refresh keeps /admin/campaigns', path(ap) === '/admin/campaigns', path(ap));
+    await ap.click('button:has-text("خروج")'); await settle(ap);
+    ok('admin logout → /admin/login', path(ap) === '/admin/login', path(ap));
+    await ap.goto(B + '/admin/coaches'); await settle(ap);
+    ok('after admin logout pages are guarded', path(ap) === '/admin/login', path(ap));
+  } else results.push('SKIP  admin password login/logout (needs backend: E2E_WITH_BACKEND=1)');
 
   // user flow with return-after-login
   const u = await (await br.newContext({ viewport: { width: 400, height: 860 } })).newPage();
@@ -140,6 +136,14 @@ async function roleLogin(p, url, phone) {
   ok('/campaigns renders', path(u) === '/campaigns' && !(await blank(u)));
   await u.goto(B + '/campaigns/demo-campaign-1'); await settle(u, 2000);
   ok('campaign detail renders', (await u.content()).includes('چالش پاییز فعال'));
+  await u.goto(B + '/app/home'); await settle(u, 2000);
+  ok('home shows featured campaign', (await u.content()).includes('کمپین ویژه') && (await u.content()).includes('چالش پاییز فعال'));
+  await u.click('a[aria-label="پروفایل من"]'); await settle(u);
+  ok('home avatar → /app/profile (not landing)', path(u) === '/app/profile', path(u));
+  await u.reload(); await settle(u);
+  ok('refresh keeps /app/profile', path(u) === '/app/profile', path(u));
+  await u.goto(B + '/app/campaigns/demo-campaign-1'); await settle(u, 1500);
+  ok('in-app campaign detail stays under /app with bottom nav', path(u) === '/app/campaigns/demo-campaign-1' && (await u.locator('nav a[href="/app/home"]').count()) > 0, path(u));
   // role switch: user → coach login form is shown (not bounced to user home)
   await u.goto(B + '/app/coach/login'); await settle(u);
   ok('signed-in user can open coach login to switch role', path(u) === '/app/coach/login', path(u));
@@ -169,7 +173,7 @@ async function roleLogin(p, url, phone) {
   await g.goto(B + '/messages/abc123'); await settle(g);
   ok('signed-out legacy /messages/:id → login with next=/app/messages/:id', path(g) === '/app/login' && decodeURIComponent(g.url()).includes('next=/app/messages/abc123'), g.url().replace(B, ''));
   await br.close();
-  const pass = results.filter(r => r.startsWith('PASS')).length, fail = results.length - pass, errs = [...new Set(errors)];
+  const pass = results.filter(r => r.startsWith('PASS')).length, fail = results.filter(r => r.startsWith('FAIL')).length, errs = [...new Set(errors)];
   console.log(results.join('\n'));
   console.log('\nERRORS:', errs.length ? '\n' + errs.join('\n') : 'none');
   console.log(`\nSUMMARY: ${pass} passed, ${fail} failed, ${errs.length} browser errors`);

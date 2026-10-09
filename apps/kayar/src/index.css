@@ -67,8 +67,10 @@
     background-image:
       radial-gradient(60rem 30rem at 100% -10%, hsl(71 100% 56% / 0.07), transparent 60%),
       radial-gradient(50rem 30rem at -10% 110%, hsl(254 100% 62% / 0.08), transparent 60%);
-    background-attachment: fixed;
   }
+  /* Fixed backgrounds make iOS Safari scroll jerk/freeze — only use them on larger screens. */
+  @media (min-width: 768px) { body { background-attachment: fixed; } }
+  html, body { overflow-x: clip; -webkit-text-size-adjust: 100%; }
 }
 
 @layer components {

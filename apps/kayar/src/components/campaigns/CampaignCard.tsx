@@ -3,8 +3,20 @@ import { CalendarDays, Megaphone } from 'lucide-react';
 import { cn } from '@project/components/lib/utils';
 import SafeImg from '../SafeImg';
 import { Catalog, faDate } from '../../lib/data';
+import { useBase } from '../../lib/base';
 
 export type Campaign = Catalog['campaigns'][number];
+
+export const PHASE = {
+  live: { label: 'فعال', tone: 'bg-primary text-primary-foreground' },
+  upcoming: { label: 'به‌زودی', tone: 'bg-accent text-accent-foreground' },
+  ended: { label: 'پایان‌یافته', tone: 'bg-muted text-muted-foreground' },
+} as const;
+export function PhaseBadge({ c, className }: { c: Campaign; className?: string }) {
+  const p = PHASE[c.phase ?? 'live'];
+  return <span className={cn('rounded-full px-2.5 py-0.5 text-[11px] font-bold', p.tone, className)}>{p.label}</span>;
+}
+export const daysUntil = (d: string | null) => (d ? Math.max(0, Math.ceil((new Date(d).getTime() - Date.now()) / 86_400_000)) : null);
 
 export const daysLeft = (end: string | null) => (end ? Math.max(0, Math.ceil((new Date(end).getTime() - Date.now()) / 86_400_000)) : null);
 
@@ -23,12 +35,14 @@ export function SponsorBadge({ c }: { c: Campaign }) {
 }
 
 export default function CampaignCard({ c, wide }: { c: Campaign; wide?: boolean }) {
-  const d = daysLeft(c.endsOn);
+  const base = useBase();
+  const d = c.phase === 'live' ? daysLeft(c.endsOn) : c.phase === 'upcoming' ? daysUntil(c.startsOn) : null;
   return (
-    <Link to={`/campaigns/${c.id}`} className={cn('glass group block overflow-hidden rounded-2xl transition hover:border-primary/50', wide && 'w-72 shrink-0 snap-start md:w-80')}>
+    <Link to={`${base}/campaigns/${c.id}`} className={cn('glass group block overflow-hidden rounded-2xl transition hover:border-primary/50', wide && 'w-72 shrink-0 snap-start md:w-80')}>
       <div className="relative">
         <CampaignCover c={c} className="h-36 w-full transition group-hover:scale-105" />
         <div className="absolute right-2 top-2"><SponsorBadge c={c} /></div>
+        <PhaseBadge c={c} className="absolute left-2 top-2" />
       </div>
       <div className="p-4">
         {c.category && <div className="text-[11px] font-bold text-primary">{c.category}</div>}
@@ -36,7 +50,7 @@ export default function CampaignCard({ c, wide }: { c: Campaign; wide?: boolean 
         <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{c.description}</p>
         <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
           <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" />{c.endsOn ? `تا ${faDate(c.endsOn)}` : 'بدون محدودیت زمانی'}</span>
-          {d !== null && <span className="rounded-full bg-accent/15 px-2 py-0.5 font-bold text-accent">{d.toLocaleString('fa-IR')} روز مانده</span>}
+          {d !== null && <span className="rounded-full bg-accent/15 px-2 py-0.5 font-bold text-accent">{d.toLocaleString('fa-IR')} روز {c.phase === 'upcoming' ? 'تا شروع' : 'مانده'}</span>}
         </div>
       </div>
     </Link>

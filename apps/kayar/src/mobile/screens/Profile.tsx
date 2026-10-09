@@ -5,14 +5,17 @@ import Avatar from '../components/Avatar';
 import { fmtJalali } from '../components/JalaliPicker';
 import { useSession, toFa } from '../store';
 import { Screen } from '../kit';
-import { StatTiles, MenuList } from './Dashboard';
+import { StatTiles, MenuList, useMyStats } from './Dashboard';
 
 export default function Profile() {
   const s = useSession();
   const nav = useNavigate();
-  const level = 52;
+  const { points } = useMyStats();
+  // Tier is derived from the account's real points: bronze < 1000 ≤ silver < 3000 ≤ gold.
+  const tier = points >= 3000 ? { name: 'طلایی', next: null, from: 3000, to: 3000 } : points >= 1000 ? { name: 'نقره‌ای', next: 'طلایی', from: 1000, to: 3000 } : { name: 'برنزی', next: 'نقره‌ای', from: 0, to: 1000 };
+  const level = tier.next ? Math.min(100, Math.round(((points - tier.from) / (tier.to - tier.from)) * 100)) : 100;
   return (
-    <Screen title="پروفایل من">
+    <Screen title="پروفایل من" back="/app/home">
       <div className="flex flex-col items-center text-center">
         <div className="relative">
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
@@ -22,10 +25,10 @@ export default function Profile() {
         </div>
         <div className="mt-4 text-xl font-black">{s.name}</div>
         <div dir="ltr" className="text-xs text-muted-foreground">+۹۸ {toFa(s.phone ?? '')}</div>
-        <div className="mt-1 text-xs font-bold text-primary">کاربر نقره‌ای{s.birth ? ` · متولد ${fmtJalali(s.birth)}` : ''}</div>
+        <div className="mt-1 text-xs font-bold text-primary">کاربر {tier.name}{s.birth ? ` · متولد ${fmtJalali(s.birth)}` : ''}</div>
       </div>
       <div className="my-6">
-        <div className="mb-2 flex justify-between text-xs"><span className="text-muted-foreground">تا سطح طلایی</span><span className="font-bold">{toFa(level)}٪</span></div>
+        <div className="mb-2 flex justify-between text-xs"><span className="text-muted-foreground">{tier.next ? `تا سطح ${tier.next}` : 'بالاترین سطح'}</span><span className="font-bold">{toFa(level)}٪</span></div>
         <div className="h-2.5 overflow-hidden rounded-full bg-white/10"><motion.div initial={{ width: 0 }} animate={{ width: `${level}%` }} transition={{ duration: 1.2 }} className="h-full rounded-full bg-primary shadow-[0_0_12px_hsl(var(--primary))]" /></div>
       </div>
       <div className="space-y-5"><StatTiles /><MenuList /></div>

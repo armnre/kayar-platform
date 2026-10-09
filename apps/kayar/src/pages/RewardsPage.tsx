@@ -8,10 +8,12 @@ import { Progress } from '@project/components/ui/progress';
 import { useCatalog, usePlay, fa, faDate, errMsg } from '../lib/data';
 import { PageHeader, SectionTitle, CardsSkeleton, Empty } from '../components/ui-kit';
 import SafeImg from '../components/SafeImg';
+import { useBase } from '../lib/base';
 
 export default function RewardsPage({ embedded }: { embedded?: boolean }) {
   const { data, isLoading } = useCatalog();
   const play = usePlay();
+  const base = useBase();
   const points = play.points;
   return (
     <div className="space-y-10">
@@ -21,12 +23,12 @@ export default function RewardsPage({ embedded }: { embedded?: boolean }) {
       </div>
       {isLoading ? <CardsSkeleton /> : (
         <>
-          {!embedded && data!.campaigns.length > 0 && (
+          {!embedded && data!.campaigns.some((c) => c.phase === 'live') && (
             <section>
               <SectionTitle title="کمپین‌های فعال" />
               <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4">
-                {data!.campaigns.map((c) => (
-                  <Link to={`/campaigns/${c.id}`} key={c.id} className="glass relative w-72 shrink-0 snap-start overflow-hidden rounded-2xl md:w-80">
+                {data!.campaigns.filter((c) => c.phase === 'live').map((c) => (
+                  <Link to={`${base}/campaigns/${c.id}`} key={c.id} className="glass relative w-72 shrink-0 snap-start overflow-hidden rounded-2xl md:w-80">
                     <SafeImg src={c.coverUrl} alt={c.title} className="h-32 w-full object-cover" fallback={<div className="grid h-32 place-items-center bg-gradient-to-br from-primary/25 via-card to-accent/30"><Megaphone className="h-10 w-10 text-primary" /></div>} />
                     <div className="p-4"><div className="text-[11px] text-primary">{c.brand}</div><div className="font-bold">{c.title}</div><p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{c.description}</p>{c.endsOn && <div className="mt-2 text-[11px] text-muted-foreground">تا {faDate(c.endsOn)}</div>}</div>
                   </Link>

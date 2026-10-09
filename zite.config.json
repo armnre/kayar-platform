@@ -1,12 +1,12 @@
 {
   "project": {
-    "name": "Repository Cloner",
-    "basePublicIdentifier": "12d7652bc92c45f9"
+    "name": "Repository Clone",
+    "basePublicIdentifier": "c3dbd9cb7e88e123"
   },
   "integrations": {
     "github": {
       "type": "github",
-      "connectionId": "svc_559345"
+      "connectionId": "svc_559414"
     }
   }
 }

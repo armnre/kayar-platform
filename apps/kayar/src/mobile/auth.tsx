@@ -6,7 +6,7 @@ import { CoachApp, CoachStatus, MSession, Role, coachStatusOf, isLoggedIn, roleO
  * Role comes from the session (`roleOf`), coach status from the shared applications store (`coachStatusOf`).
  * Every guard below reads only these two, so they can never disagree.
  */
-export const LOGIN_FOR: Record<Role, string> = { user: '/app/login', coach: '/app/coach/login', admin: '/app/admin/login' };
+export const LOGIN_FOR: Record<Role, string> = { user: '/app/login', coach: '/app/coach/login', admin: '/admin/login' };
 
 export type CoachPage = 'dashboard' | 'apply' | 'status' | 'messages';
 /** Which coach pages each status may open. The FIRST entry is that status's home. */
@@ -23,7 +23,7 @@ export const coachHome = (status: CoachStatus) => `/app/coach/${COACH_PAGES[stat
 export function homeFor(s: MSession, apps: Record<string, CoachApp>): string {
   if (!isLoggedIn(s)) return s.onboarded ? '/app/login' : '/app/welcome';
   const role = roleOf(s);
-  if (role === 'admin') return '/app/admin';
+  if (role === 'admin') return '/admin';
   if (role === 'coach') return coachHome(coachStatusOf(s.phone, apps));
   return s.name ? '/app/home' : '/app/complete-profile';
 }

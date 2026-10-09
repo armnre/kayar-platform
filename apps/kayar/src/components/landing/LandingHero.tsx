@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Logo from '../Logo';
 
 const IMG = 'https://images.fillout.com/886713/3qilvz8bzw/generated-images/ehiCe6mR6VKtYGiUcxJA6q/img_XqWVTvQkpFraQZTO.jpg';
-const NAV = [['بدن‌یار', '#bodyyar'], ['مربیان', '#coaches'], ['مرشد', '#morshed'], ['کمپین‌ها', '#campaigns'], ['بازی', '#games'], ['فروشگاه کایوش', '#shop']];
+const NAV = [['بدن‌یار', '#bodyyar'], ['مربیان', '#coaches'], ['مرشد', '#morshed'], ['کمپین‌ها', '#campaigns'], ['نصب اپ', '#install'], ['فروشگاه کایوش', '#shop']];
 
 export function LandingNav() {
   const [open, setOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function LandingHero() {
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
           className="mt-10 grid max-w-lg grid-cols-3 divide-x divide-x-reverse divide-white/10 rounded-2xl border border-white/10 bg-card/60 py-4 text-center backdrop-blur">
-          {[[Bot, '۲۴ ساعته', 'برنامه‌ی هوشمند'], [Clock, '+۵۰۰', 'ساعت محتوا'], [Users, '+۱۵', 'مربی']].map(([I, v, l]) => {
+          {[[Bot, 'بدن‌یار', 'برنامه هوشمند'], [Clock, 'مرشد', 'پادکست ورزشی'], [Users, 'مربیان', 'تأییدشده']].map(([I, v, l]) => {
             const Ic = I as typeof Bot;
             return <div key={l as string} className="flex flex-col items-center gap-1"><Ic className="h-4 w-4 text-primary" /><div className="text-lg font-black text-primary">{v as string}</div><div className="text-[11px] text-muted-foreground">{l as string}</div></div>;
           })}
@@ -74,7 +74,7 @@ export const MODULES = [
   { t: 'بدن‌یار', d: 'دستیار هوش مصنوعی شخصی‌سازی برنامه', I: Bot, tone: 'accent', href: '#bodyyar' },
   { t: 'مربیان کایار', d: 'مربیان حرفه‌ای و متخصص', I: Users, tone: 'primary', href: '#coaches' },
   { t: 'مرشد', d: 'پادکست و موزیک برای بهترین نسخه تو', I: Headphones, tone: 'accent', href: '#morshed' },
-  { t: 'بازی و جایزه', d: 'چالش‌ها، امتیازها و جوایز هیجان‌انگیز', I: Trophy, tone: 'primary', href: '#games' },
+  { t: 'کمپین و جایزه', d: 'کمپین برندها، چالش‌ها و جوایز', I: Trophy, tone: 'primary', href: '#campaigns' },
 ] as const;
 
 export function ModuleCards() {
