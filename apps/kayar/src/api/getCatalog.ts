@@ -14,7 +14,7 @@ export default createEndpoint({
       zite.coaches.findAll({ filters: { status: 'تایید شده' }, limit: 500 }),
       zite.coachPlans.findAll({ limit: 2000 }),
       zite.audioContents.findAll({ filters: { published: true }, limit: 500 }),
-      zite.campaigns.findAll({ filters: { status: 'فعال' }, limit: 100 }),
+      zite.campaigns.findAll({ limit: 200 }),
       zite.challenges.findAll({ filters: { active: true }, limit: 200 }),
       zite.rewards.findAll({ limit: 200 }),
       zite.coachAvailability.findAll({ limit: 2000 }),
@@ -50,10 +50,13 @@ export default createEndpoint({
         coverUrl: a.coverUrl ?? '', durationSeconds: a.durationSeconds ?? 0, author: a.author ?? '',
       })),
       campaigns: campaigns.records
-        .filter((c) => (!c.startsOn || c.startsOn <= today) && (!c.endsOn || c.endsOn >= today))
+        // Drafts are never public. Published campaigns are returned live, upcoming, or ended within the last 60 days; the UI labels each.
+        .filter((c) => c.status === 'فعال' || c.status === 'پایان یافته')
+        .filter((c) => !c.endsOn || c.endsOn >= new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10))
         .map((c) => ({
           id: c.id, title: c.title ?? '', brand: c.brand ?? '', description: c.description ?? '', coverUrl: c.coverUrl ?? '', startsOn: c.startsOn ?? null, endsOn: c.endsOn ?? null,
           sponsorLogoUrl: c.sponsorLogoUrl ?? '', sponsorWebsite: c.sponsorWebsite ?? '', category: c.category ?? '', placement: c.placement ?? [], terms: c.terms ?? '', ctaLabel: c.ctaLabel || 'شرکت در کمپین',
+          phase: (c.status === 'پایان یافته' || (c.endsOn && c.endsOn < today) ? 'ended' : c.startsOn && c.startsOn > today ? 'upcoming' : 'live') as 'live' | 'upcoming' | 'ended',
         })),
       challenges: challenges.records.map((c) => ({
         id: c.id, title: c.title ?? '', description: c.description ?? '', target: c.target ?? 1, unit: c.unit ?? '', points: c.points ?? 0, endsOn: c.endsOn ?? null, campaignId: first(c.campaign) ?? null,
@@ -65,7 +68,7 @@ export default createEndpoint({
     } as {
       coaches: { id: string; name: string; title: string; specialties: string[]; bio: string; avatarUrl: string; yearsExperience: number; rating: number; reviewCount: number; certifications: string; category: string; sports: string; services: string[]; levels: string[]; city: string; acceptingClients: boolean; availability: { id: string; weekday: string; startTime: string; endTime: string }[]; plans: { id: string; name: string; sessions: number; durationWeeks: number; price: number; description: string }[] }[];
       audio: { id: string; title: string; category: string; description: string; audioUrl: string; locked: boolean; membersOnly: boolean; featured: boolean; rightsSource: string; coverUrl: string; durationSeconds: number; author: string }[];
-      campaigns: { id: string; title: string; brand: string; description: string; coverUrl: string; startsOn: string | null; endsOn: string | null; sponsorLogoUrl: string; sponsorWebsite: string; category: string; placement: string[]; terms: string; ctaLabel: string }[];
+      campaigns: { id: string; title: string; brand: string; description: string; coverUrl: string; startsOn: string | null; endsOn: string | null; sponsorLogoUrl: string; sponsorWebsite: string; category: string; placement: string[]; terms: string; ctaLabel: string; phase: 'live' | 'upcoming' | 'ended' }[];
       challenges: { id: string; title: string; description: string; target: number; unit: string; points: number; endsOn: string | null; campaignId: string | null }[];
       rewards: { id: string; title: string; description: string; costPoints: number; kind: string; stock: number; expiresOn: string | null; perUserLimit: number; campaignId: string | null }[];
     };

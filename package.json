@@ -1,5 +1,5 @@
 {
-  "name": "repository-cloner",
+  "name": "repository-clone",
   "private": true,
   "workspaces": [
     "apps/*",

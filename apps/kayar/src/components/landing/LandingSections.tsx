@@ -150,35 +150,6 @@ export function MorshedSection() {
   );
 }
 
-export function GamesSection() {
-  const board = [['علی', '۳۱۵۰'], ['سارا', '۳۱۲۰'], ['مهدی', '۲۹۸۰']];
-  const prizes = [[Gift, 'جوایز ویژه'], [Tag, 'کد تخفیف'], [Crown, 'اشتراک رایگان'], [Shirt, 'تخفیف لباس']] as const;
-  return (
-    <Panel id="games">
-      <Head t="بازی و جایزه" s="چالش کن، امتیاز بگیر، جایزه ببر" cta="شروع چالش" />
-      <div className="grid items-center gap-6 md:grid-cols-3">
-        <div className="relative mx-auto aspect-square w-56">
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="absolute inset-0 rounded-full border-4 border-primary bg-[conic-gradient(hsl(var(--primary))_0_45deg,hsl(var(--card))_45deg_90deg,hsl(var(--primary))_90deg_135deg,hsl(var(--card))_135deg_180deg,hsl(var(--primary))_180deg_225deg,hsl(var(--card))_225deg_270deg,hsl(var(--primary))_270deg_315deg,hsl(var(--card))_315deg)] shadow-[0_0_60px_hsl(var(--primary)/0.4)]" />
-          <Link to="/app" className="absolute inset-[35%] grid place-items-center rounded-full bg-background text-xs font-black text-primary ring-4 ring-primary">بچرخون</Link>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-background/60 p-5">
-          <div className="mb-3 font-black">جدول رتبه‌بندی</div>
-          {board.map(([n, p], i) => (
-            <div key={n} className="flex items-center gap-3 border-b border-white/5 py-3 last:border-0">
-              <span className={`grid h-7 w-7 place-items-center rounded-full text-xs font-black ${i === 0 ? 'bg-primary text-primary-foreground' : 'bg-white/10'}`}>{(i + 1).toLocaleString('fa-IR')}</span>
-              <span className="flex-1">{n}</span><span className="font-black text-primary">{p}</span>
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {prizes.map(([I, l]) => <div key={l} className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-background/60 p-4 text-xs"><I className="h-7 w-7 text-primary" />{l}</div>)}
-        </div>
-      </div>
-    </Panel>
-  );
-}
-
 export function ShopSection() {
   return (
     <Panel id="shop" className="grid items-center gap-6 md:grid-cols-2">
@@ -199,19 +170,6 @@ export function ShopSection() {
         </div>
       </div>
     </Panel>
-  );
-}
-
-export function StatsStrip() {
-  const s = [[Users, '+۵۰٬۰۰۰', 'کاربر فعال'], [Smile, '+۹۶٪', 'رضایت کاربران'], [Dumbbell, '+۳۰٬۰۰۰', 'برنامه ساخته‌شده'], [Bot, '+۱۲۰٬۰۰۰', 'گفتگو با بدن‌یار']] as const;
-  return (
-    <section className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 md:grid-cols-4">
-      {s.map(([I, v, l], i) => (
-        <motion.div key={l} {...rv} transition={{ delay: i * 0.08 }} className="rounded-3xl border border-white/10 bg-card/50 p-6 text-center">
-          <I className="mx-auto h-7 w-7 text-primary" /><div className="mt-2 text-3xl font-black">{v}</div><div className="text-xs text-muted-foreground">{l}</div>
-        </motion.div>
-      ))}
-    </section>
   );
 }
 

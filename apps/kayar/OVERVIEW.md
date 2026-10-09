@@ -15,7 +15,7 @@
 - هوش مصنوعی: هر سرویس سازگار با OpenAI از طریق رازهای `ZITE_AI_API_KEY` و اختیاری `ZITE_AI_BASE_URL` و `ZITE_AI_MODEL`.
 - درگاه پرداخت: پرداخت‌ها با وضعیت «در انتظار درگاه» ثبت می‌شوند؛ هیچ مبلغی جابه‌جا نمی‌شود.
 
-**مراحل بعدی:** پنل مدیریت داخلی (مربیان، محتوا، کمپین‌ها) و پنل مربی به‌صورت اپ جداگانه.
+**پنل مدیریت:** در همین اپ و زیر مسیر `/admin` (قبلاً اپ جداگانه kayar-admin بود).
 
 ## Coaches & messaging
 Coaches apply from the landing page (/coach/apply) with identity, specialties, services, documents and a photo. The Kayar Admin app reviews applications (pending, approved, needs changes, rejected, suspended); only approved coaches appear publicly. Approved coaches get a panel (/coach) for their profile, services, weekly availability, booking requests, clients and notifications. Users and coaches chat through a real, access-controlled messaging system (/messages) with read receipts and unread badges.
@@ -35,7 +35,13 @@ Sponsored campaigns (/campaigns) with sponsor, dates, terms, call to action and 
 Uses any OpenAI-compatible provider, keys kept server-side only: set secret ZITE_AI_API_KEY (and optionally ZITE_AI_BASE_URL, ZITE_AI_MODEL) in app Settings → Secrets. Without a key, chat and plan generation are clearly disabled — nothing is simulated. Advice is cautious and never a substitute for medical care.
 
 ## Routing & roles (test mode)
-Everything lives under /app with one test session (phone + code 123456) and a role: athlete, coach or admin. Athletes sign in at /app/login, coaches at /app/coach/login (then land on apply / status / dashboard depending on approval), admins at /app/admin/login (test number 09120000000). Each area is closed to the other roles. The public site is / plus /campaigns and /rewards; old web URLs redirect into /app.
+Athletes and coaches live under /app with one test session (phone + code 123456). Athletes sign in at /app/login, coaches at /app/coach/login (then land on apply / status / dashboard depending on approval). Campaigns and rewards also open inside the app at /app/campaigns, /app/campaigns/:id and /app/rewards so users never drop out to the public site. Each area is closed to the other roles. The public site is / plus /campaigns and /rewards; old web URLs redirect into /app.
+
+## Admin panel (/admin)
+The former Kayar Admin app now lives at /admin: dashboard (real DB stats), coach review, test coach files, Morshed content, campaigns & sponsors, challenges and rewards. It has its own username/password login at /admin/login, separate from athletes and coaches.
+- **Test account:** username `admin`, password `kayar-test-1234`. This is a TEST login, not production security. To change it, set the secret `ZITE_ADMIN_PASSWORD` (and optionally `ZITE_ADMIN_SECRET` for token signing); the test password then stops working.
+- Every admin endpoint verifies a server-signed, 12-hour token — hiding the UI is not the only protection.
+- "Test coach files" changes the status of coach applications stored in the current browser (test mode).
 
 ## Test-mode data: local storage only
 In test mode the session, coach applications, chat, challenge progress, points and reward codes are stored in the browser's localStorage (`kayar.mobile.v1`, `kayar.demo.coachApps.v1`, `kayar.demo.data.v1`). That means:
@@ -43,5 +49,8 @@ In test mode the session, coach applications, chat, challenge progress, points a
 - Tabs of the same browser profile do sync (via the `storage` event), so admin and coach can be tested side by side in two tabs, but only one role is signed in per profile at a time.
 - Clearing site data resets everything. Sample content (ids starting with `demo-`) fills empty catalog sections.
 No real SMS, payment, AI or server-side sync is connected; real services can replace these stores later without changing routes.
+
+## Workspace migration (Oct 2026)
+Restored from GitHub `main` (PRs #1–#3 all merged, no unmerged branches) into a fresh Zite workspace. The 18 database tables were recreated from `zite.schema.json` with identical names. The admin panel (formerly the separate `kayar-admin` app) is planned to move into this app under `/admin`.
 
 E2E: `npm run test:e2e:ci` (build + preview + browser tests; first run `npx playwright install chromium`). Any failing test exits with code 1.
