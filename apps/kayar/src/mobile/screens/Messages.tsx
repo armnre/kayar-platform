@@ -49,7 +49,7 @@ export function Thread({ side }: { side: Side }) {
   const c = useDemo().convs[id ?? ''];
   const [text, setText] = useState('');
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => end.current?.scrollIntoView({ block: 'end' }), [c?.messages.length]);
+  useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, [c?.messages.length]);
   if (!c) return <NotFound />;
   const send = () => { sendDemoMsg(c.id, side, text); setText(''); };
   return (

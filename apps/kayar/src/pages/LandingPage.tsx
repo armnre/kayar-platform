@@ -1,7 +1,11 @@
 import { motion, useScroll, useSpring } from 'framer-motion';
 import InstallSection from '../components/landing/InstallSection';
-import LandingHero, { LandingNav, ModuleCards } from '../components/landing/LandingHero';
-import { BodyYarSection, CoachesSection, MorshedSection, ShopSection, FinalCta, Footer, CampaignsSection } from '../components/landing/LandingSections';
+import LandingHero, { LandingNav } from '../components/landing/LandingHero';
+import HowItWorks from '../components/landing/HowItWorks';
+import MorshedSection from '../components/landing/MorshedSection';
+import ShopSection from '../components/landing/ShopSection';
+import MiniPlayer from '../components/morshed/MiniPlayer';
+import { BodyYarSection, CoachesSection, FinalCta, Footer, CampaignsSection } from '../components/landing/LandingSections';
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
@@ -14,16 +18,17 @@ export default function LandingPage() {
       <LandingNav />
       <main className="relative space-y-8 px-3 md:space-y-12 md:px-4">
         <LandingHero />
-        <ModuleCards />
+        <HowItWorks />
         <BodyYarSection />
         <CoachesSection />
-        <CampaignsSection />
         <MorshedSection />
-        <InstallSection />
+        <CampaignsSection />
         <ShopSection />
+        <InstallSection />
         <FinalCta />
       </main>
       <Footer />
+      <MiniPlayer className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] md:left-auto md:right-4 md:w-[400px]" />
     </div>
   );
 }

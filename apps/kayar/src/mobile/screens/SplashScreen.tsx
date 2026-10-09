@@ -16,7 +16,8 @@ export default function SplashScreen() {
   const [p, setP] = useState(0);
   useEffect(() => {
     const quick = sessionStorage.getItem(SEEN) === '1';
-    const total = quick ? 450 : 2600;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const total = quick || reduce ? 350 : 1500;
     const t = setInterval(() => setP((x) => Math.min(100, x + 100 / (total / 40))), 40);
     const d = setTimeout(() => {
       sessionStorage.setItem(SEEN, '1');

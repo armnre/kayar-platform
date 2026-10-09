@@ -1,3 +1,4 @@
+import { MotionConfig } from 'framer-motion';
 import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import Layout from './components/Layout';
 import LandingPage from './pages/LandingPage';
@@ -7,6 +8,8 @@ import CampaignsPage from './pages/CampaignsPage';
 import CampaignDetailPage from './pages/CampaignDetailPage';
 import RewardsPage from './pages/RewardsPage';
 import AdminApp from './admin/AdminApp';
+import { PlayerProvider } from './lib/player';
+import RouteErrorBoundary from './components/RouteErrorBoundary';
 
 // index.html is platform-owned, so Persian/RTL and full-bleed (safe-area) viewport are applied at startup.
 if (typeof document !== 'undefined') {
@@ -46,7 +49,10 @@ function WithId({ to }: { to: string }) {
  */
 export default function App() {
   return (
+    <MotionConfig reducedMotion="user">
     <BrowserRouter>
+      <PlayerProvider>
+      <RouteErrorBoundary>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin/*" element={<AdminApp />} />
@@ -63,6 +69,9 @@ export default function App() {
         {LEGACY.map(([from, to]) => <Route key={from} path={from} element={<Navigate to={to} replace />} />)}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </RouteErrorBoundary>
+      </PlayerProvider>
     </BrowserRouter>
+    </MotionConfig>
   );
 }

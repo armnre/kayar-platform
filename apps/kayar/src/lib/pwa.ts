@@ -12,8 +12,9 @@ if (typeof window !== 'undefined') {
   window.addEventListener('appinstalled', () => { installed = true; deferred = null; emit(); });
 }
 
+const subscribe = (f: () => void) => { subs.add(f); return () => { subs.delete(f); }; };
 export function usePwa() {
-  const snap = useSyncExternalStore((f) => { subs.add(f); return () => subs.delete(f); }, () => `${!!deferred}|${installed}`);
+  const snap = useSyncExternalStore(subscribe, () => `${!!deferred}|${installed}`);
   const [standalone, setStandalone] = useState(false);
   useEffect(() => {
     const q = window.matchMedia('(display-mode: standalone)');

@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import type { Track } from '../lib/player';
 
 /**
  * Local (test-mode) session for the whole /app experience.
@@ -33,6 +34,8 @@ export type MSession = {
   chat?: { role: 'user' | 'assistant'; text: string; at: number }[];
   readNotifs?: string[];
   liked?: string[];
+  /** Liked Jamendo tracks are kept whole (they don't live in our database). */
+  likedTracks?: Track[];
 };
 
 const KEY = 'kayar.mobile.v1';
@@ -76,8 +79,10 @@ export function resetSession() {
   localStorage.setItem(KEY, JSON.stringify(state));
   emit();
 }
+/** Stable subscribe (module-level) so React never re-subscribes on every render; always returns an unsubscribe function. */
+const subscribe = (l: () => void) => { listeners.add(l); return () => { listeners.delete(l); }; };
 export function useSession() {
-  return useSyncExternalStore((l) => { listeners.add(l); return () => listeners.delete(l); }, () => state);
+  return useSyncExternalStore(subscribe, () => state);
 }
 export const isLoggedIn = (s: MSession) => !!s.verified;
 /** Sessions created before roles existed are athletes. */
@@ -85,7 +90,7 @@ export const roleOf = (s: MSession): Role => s.role ?? 'user';
 
 /* ---------- demo coach applications (shared by coach + admin on this device) ---------- */
 export function useCoachApps() {
-  return useSyncExternalStore((l) => { listeners.add(l); return () => listeners.delete(l); }, () => apps);
+  return useSyncExternalStore(subscribe, () => apps);
 }
 export function saveCoachApp(app: Omit<CoachApp, 'updatedAt'>) {
   apps = { ...apps, [app.phone]: { ...app, updatedAt: Date.now() } };

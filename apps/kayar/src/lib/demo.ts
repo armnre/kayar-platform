@@ -24,7 +24,8 @@ const ls = new Set<() => void>();
 const save = (next: DemoState) => { st = next; localStorage.setItem(KEY, JSON.stringify(st)); ls.forEach((l) => l()); };
 if (typeof window !== 'undefined') window.addEventListener('storage', (e) => { if (e.key === KEY) { st = load(); ls.forEach((l) => l()); } });
 
-export const useDemo = () => useSyncExternalStore((l) => { ls.add(l); return () => ls.delete(l); }, () => st);
+const subscribe = (l: () => void) => { ls.add(l); return () => { ls.delete(l); }; };
+export const useDemo = () => useSyncExternalStore(subscribe, () => st);
 export const demoId = (phone?: string) => phone || 'guest';
 export const pointsOf = (s: DemoState, who: string) => s.points[who] ?? START_POINTS;
 

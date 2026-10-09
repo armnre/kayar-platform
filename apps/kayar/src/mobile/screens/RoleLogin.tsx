@@ -44,23 +44,23 @@ export default function RoleLogin({ role, title, badge, intro, allowPhone, foote
   };
 
   return (
-    <Screen back="/app/login" className="pb-8">
-      <AuthBackdrop img="https://images.fillout.com/886978/vxifokrwnr/generated-images/kmAsFTuYTSezzezPvRzXC9/img_miXn1GtlWJAIGuSj.jpg">
+    <Screen className="pb-5">
+      <AuthBackdrop back="/app/login" img="https://images.fillout.com/886978/vxifokrwnr/generated-images/kmAsFTuYTSezzezPvRzXC9/img_miXn1GtlWJAIGuSj.jpg">
         <span className="rounded-full border border-primary/40 bg-background/70 px-3 py-1 text-xs font-bold text-primary backdrop-blur">{badge}</span>
       </AuthBackdrop>
 
-      <div className="mt-4 text-center">
-        <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[1.6rem] font-black">{title}</motion.h1>
-        <div className="mx-auto mt-2 max-w-xs text-sm leading-7 text-muted-foreground">{intro}</div>
+      <div className="mt-3 text-center">
+        <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[1.45rem] font-black leading-9 sm:text-[1.6rem]">{title}</motion.h1>
+        <div className="mx-auto mt-1.5 max-w-xs text-[13px] leading-6 text-muted-foreground">{intro}</div>
       </div>
 
-      <div className="mt-5 grid grid-cols-3 gap-2">
+      <div className="mt-4 grid grid-cols-3 gap-2 [@media(max-height:640px)]:hidden">
         {PERKS.map(([I, l]) => (
-          <div key={l} className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/[0.07] bg-card/70 py-3 text-[11px] font-bold"><I className="h-4 w-4 text-primary" />{l}</div>
+          <div key={l} className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/[0.07] bg-card/70 py-2.5 text-[11px] font-bold"><I className="h-4 w-4 text-primary" />{l}</div>
         ))}
       </div>
 
-      <form className="mt-6 space-y-3" onSubmit={(e) => { e.preventDefault(); if (!sent) { if (valid) send(); } else if (code.length === OTP_LENGTH) verify(); }}>
+      <form className="mt-5 space-y-3 [@media(max-height:640px)]:mt-4" onSubmit={(e) => { e.preventDefault(); if (!sent) { if (valid) send(); } else if (code.length === OTP_LENGTH) verify(); }}>
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-muted-foreground">{sent ? 'کد تأیید را وارد کنید' : 'شماره موبایل'}</span>
           <StepDots step={sent ? 1 : 0} total={2} />
@@ -93,7 +93,7 @@ export default function RoleLogin({ role, title, badge, intro, allowPhone, foote
           </div>
         )}
       </form>
-      <div className="mt-auto space-y-2 pt-8 text-center text-xs text-muted-foreground">
+      <div className="mt-auto space-y-2 pt-5 text-center text-xs text-muted-foreground">
         {footer}
         <div>ورزشکار هستید؟ <Link to="/app/login" className="font-bold text-primary">ورود کاربران</Link></div>
       </div>
