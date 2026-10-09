@@ -54,3 +54,10 @@ No real SMS, payment, AI or server-side sync is connected; real services can rep
 Restored from GitHub `main` (PRs #1–#4 all merged; PR #4 moved the admin panel to /admin) into a fresh Zite workspace. The 18 database tables were recreated from `zite.schema.json` with identical names. The separate Kayar Admin app was also restored. Bottom nav: Home · Morshed · BodyYar · Coaches · Challenges (profile lives behind the settings icon on Home). Landing shop section links to the Kapoosh store (kapoosh.ir).
 
 E2E: `npm run test:e2e:ci` (build + preview + browser tests; first run `npx playwright install chromium`). Any failing test exits with code 1.
+
+## Oct 2026 — music, landing, stability
+- **Morshed music:** live Jamendo catalog (search, genre filter, infinite paging) via server endpoint `jamendoTracks`; only `ZITE_JAMENDO_CLIENT_ID` is used (server-side, never the client secret). Tracks are stream-only under Creative Commons with attribution. A clearly labelled dev Mock is available with `?mock=jamendo` (off with `?mock=off`).
+- **One global player** at the app root (single audio element): play/pause/next/prev, progress, error + retry, survives route changes; mini player on landing, public pages and in-app.
+- **Kapoosh:** latest products, prices and links come live from kapoosh.ir's public WooCommerce Store API (`kapooshProducts`).
+- **Landing:** newcomer "how it works" section; no fake stats/points; BodyYar clothing/QR card removed; coaches shown only from real data.
+- `node tests/check-effects.cjs` fails if any effect returns a non-function (guards against "n is not a function").

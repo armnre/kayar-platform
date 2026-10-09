@@ -1,12 +1,17 @@
 {
   "project": {
-    "name": "GitHub Project Audit",
-    "basePublicIdentifier": "a48d659251091dc1"
+    "name": "Kayar Music Landing",
+    "basePublicIdentifier": "674db811e3a25885"
   },
   "integrations": {
     "github": {
       "type": "github",
-      "connectionId": "svc_559416"
+      "connectionId": "svc_559427"
+    }
+  },
+  "envVars": {
+    "ZITE_JAMENDO_CLIENT_ID": {
+      "description": "Jamendo API Client ID (from devportal.jamendo.com) used server-side to list/search playable tracks for Morshed"
     }
   }
 }

@@ -5,6 +5,7 @@ import { Toaster } from '@project/components/ui/sonner';
 import { RequireRole, RedirectIfSignedIn, RequireCoachPage } from './auth';
 import type { Role } from './store';
 import BottomNav from './BottomNav';
+import MiniPlayer from '../components/morshed/MiniPlayer';
 import SplashScreen from './screens/SplashScreen';
 import Onboarding from './screens/Onboarding';
 import Login from './screens/Login';
@@ -119,6 +120,7 @@ export default function MobileApp() {
             </AnimatePresence>
           )}
         </div>
+        <MiniPlayer className={`absolute inset-x-3 ${showNav ? 'bottom-[calc(6.25rem+env(safe-area-inset-bottom))]' : 'bottom-[calc(0.75rem+env(safe-area-inset-bottom))]'}`} />
         {showNav && online && <BottomNav />}
         <Toaster position="top-center" />
       </div>

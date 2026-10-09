@@ -7,7 +7,6 @@ import { Toaster } from '@project/components/ui/sonner';
 import { cn } from '@project/components/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from './Logo';
-import { PlayerProvider } from '../lib/player';
 import MiniPlayer from './morshed/MiniPlayer';
 
 const nav = [
@@ -23,7 +22,6 @@ export default function Layout() {
   const apps = useCoachApps();
   const loc = useLocation();
   return (
-    <PlayerProvider>
     <div dir="rtl" className="relative min-h-screen pb-28 md:pb-10">
       <div className="pointer-events-none fixed -top-40 right-0 h-[30rem] w-[30rem] rounded-full bg-primary/10 blur-[140px]" />
       <div className="pointer-events-none fixed bottom-0 left-0 h-[26rem] w-[26rem] rounded-full bg-accent/10 blur-[140px]" />
@@ -55,11 +53,10 @@ export default function Layout() {
           <Outlet />
         </motion.main>
       </AnimatePresence>
-      <MiniPlayer />
+      <MiniPlayer className="fixed inset-x-3 bottom-28 md:bottom-4 md:left-auto md:right-4 md:w-[400px]" />
       <MobileNav />
       <Toaster position="top-center" />
     </div>
-    </PlayerProvider>
   );
 }
 

@@ -1,4 +1,9 @@
 {
-  "id": "vxifokrwnr",
-  "accessMode": "external"
+  "id": "42sz8la9f5",
+  "accessMode": "external",
+  "envVars": {
+    "ZITE_JAMENDO_CLIENT_ID": {
+      "description": "Jamendo API Client ID (from devportal.jamendo.com) used server-side to list/search playable tracks for Morshed"
+    }
+  }
 }

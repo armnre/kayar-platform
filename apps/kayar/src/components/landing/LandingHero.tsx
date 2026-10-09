@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Headphones, Dumbbell, Bot, Users, Trophy, Menu, Sparkles } from 'lucide-react';
+import { Headphones, Bot, Users, Trophy, Menu, X, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import LaunchLink from './LaunchLink';
 import Logo from '../Logo';
 
-const NAV = [['بدن‌یار', '#bodyyar'], ['مربیان', '#coaches'], ['مرشد', '#morshed'], ['کمپین‌ها', '#campaigns'], ['نصب اپ', '#install'], ['فروشگاه کاپوش', '#shop']];
+const NAV = [['کایار چیست', '#how'], ['بدن‌یار', '#bodyyar'], ['مربیان', '#coaches'], ['مرشد', '#morshed'], ['کمپین‌ها', '#campaigns'], ['نصب اپ', '#install'], ['کاپوش', '#shop']];
 
 export function LandingNav() {
   const [open, setOpen] = useState(false);
@@ -18,10 +18,10 @@ export function LandingNav() {
         <div className="flex items-center gap-2">
           <Link to="/app/coach/login" className="hidden rounded-full border border-white/15 px-4 py-2 text-sm transition hover:border-primary hover:text-primary sm:inline-flex">ورود مربیان</Link>
           <LaunchLink className="rounded-full bg-primary px-4 py-2 text-sm font-black text-primary-foreground shadow-[0_0_24px_-4px_hsl(var(--primary))] transition hover:scale-105 sm:px-5">ورود / ثبت‌نام</LaunchLink>
-          <button onClick={() => setOpen(!open)} className="grid h-10 w-10 place-items-center rounded-full border border-white/10 lg:hidden" aria-label="منو"><Menu className="h-5 w-5" /></button>
+          <button onClick={() => setOpen(!open)} className="grid h-10 w-10 place-items-center rounded-full border border-white/10 lg:hidden" aria-label="منو" aria-expanded={open}>{open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
         </div>
       </div>
-      {open && <nav className="flex flex-col gap-1 border-t border-white/5 p-4 lg:hidden">{NAV.map(([l, h]) => <a key={h} href={h} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/5">{l}</a>)}<Link to="/app/coach/login" className="rounded-xl px-3 py-3 font-bold text-primary hover:bg-white/5">ورود و درخواست همکاری مربیان</Link></nav>}
+      <AnimatePresence>{open && <motion.nav initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="flex flex-col gap-1 overflow-hidden border-t border-white/5 px-4 pb-4 pt-2 lg:hidden">{NAV.map(([l, h]) => <a key={h} href={h} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3 hover:bg-white/5">{l}</a>)}<Link to="/app/coach/login" className="rounded-xl px-3 py-3 font-bold text-primary hover:bg-white/5">ورود و درخواست همکاری مربیان</Link></motion.nav>}</AnimatePresence>
     </header>
   );
 }
@@ -53,17 +53,7 @@ export default function LandingHero() {
         <div className="grid-bg absolute inset-0 opacity-30" />
         <motion.div animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 5, repeat: Infinity }} className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-primary/25 blur-[120px]" />
         <motion.div animate={{ opacity: [0.2, 0.45, 0.2] }} transition={{ duration: 6, repeat: Infinity, delay: 1 }} className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-primary/20 blur-[120px]" />
-        {/* mobile floating chips */}
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0, y: [0, -6, 0] }} transition={{ delay: 0.8, y: { duration: 4, repeat: Infinity } }}
-          className="absolute right-4 top-5 flex items-center gap-2 rounded-2xl border border-white/10 bg-black/55 px-3 py-2 backdrop-blur-xl md:hidden">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary text-primary-foreground"><Dumbbell className="h-4 w-4" /></span>
-          <div><div className="text-[10px] text-white/60">تمرین امروز</div><div className="text-xs font-black text-white">۴۵ دقیقه · ۳۲۰ کالری</div></div>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0, y: [0, 6, 0] }} transition={{ delay: 1.1, y: { duration: 5, repeat: Infinity } }}
-          className="absolute left-4 top-[30%] flex items-center gap-1.5 rounded-full border border-primary/40 bg-black/55 px-3 py-1.5 text-[11px] font-bold text-white backdrop-blur-xl md:hidden">
-          <Trophy className="h-3.5 w-3.5 text-primary" />+۵۰ امتیاز
-        </motion.div>
-        <div className="relative flex min-h-[640px] flex-col justify-end p-5 pt-[60%] sm:p-8 md:min-h-[680px] md:max-w-[58%] md:justify-center md:p-14 md:pt-14">
+        <div className="relative flex min-h-[640px] flex-col justify-end p-5 pt-[58%] sm:p-8 md:min-h-[680px] md:max-w-[58%] md:justify-center md:p-14 md:pt-14">
           <motion.span initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary backdrop-blur">
             <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-primary" /></span>
             همراه هوشمند ورزش و سلامت
@@ -82,10 +72,10 @@ export default function LandingHero() {
               <span className="absolute inset-0 -translate-x-full animate-[sweep_2.8s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
               <Sparkles className="relative h-4 w-4" /><span className="relative">برنامه‌ام رو بساز</span>
             </LaunchLink>
-            <a href="#coaches" className="inline-flex justify-center rounded-full border border-white/20 bg-white/5 px-8 py-3.5 font-bold text-white backdrop-blur transition hover:border-primary hover:text-primary">با مربی‌ها آشنا شو</a>
+            <a href="#how" className="inline-flex justify-center rounded-full border border-white/20 bg-white/5 px-8 py-3.5 font-bold text-white backdrop-blur transition hover:border-primary hover:text-primary">کایار چطور کار می‌کند؟</a>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-6 grid max-w-lg grid-cols-3 gap-2 md:mt-10">
-            {([[Bot, 'بدن‌یار', 'برنامه هوشمند'], [Headphones, 'مرشد', 'پادکست ورزشی'], [Users, 'مربیان', 'تأییدشده']] as const).map(([Ic, v, l]) => (
+            {([[Bot, 'بدن‌یار', 'برنامه هوشمند'], [Headphones, 'مرشد', 'موزیک و پادکست'], [Users, 'مربیان', 'بررسی‌شده']] as const).map(([Ic, v, l]) => (
               <div key={l} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-xl">
                 <Ic className="h-4 w-4 text-primary" />
                 <div className="mt-2 text-base font-black text-white">{v}</div>
@@ -94,15 +84,6 @@ export default function LandingHero() {
             ))}
           </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.9 }}
-          className="absolute left-6 top-6 hidden items-center gap-3 rounded-2xl border border-white/10 bg-black/50 px-4 py-3 backdrop-blur-xl md:flex">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground"><Dumbbell className="h-5 w-5" /></span>
-          <div><div className="text-xs text-white/60">تمرین امروز</div><div className="text-sm font-black text-white">۴۵ دقیقه · ۳۲۰ کالری</div></div>
-        </motion.div>
-        <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 4, repeat: Infinity }}
-          className="absolute bottom-8 left-8 hidden items-center gap-2 rounded-2xl border border-primary/30 bg-black/50 px-4 py-2 text-xs text-white backdrop-blur-xl md:flex">
-          <Trophy className="h-4 w-4 text-primary" />+۵۰ امتیاز چالش
-        </motion.div>
       </div>
     </section>
   );

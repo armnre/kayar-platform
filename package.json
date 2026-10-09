@@ -1,5 +1,5 @@
 {
-  "name": "github-project-audit",
+  "name": "kayar-music-landing",
   "private": true,
   "workspaces": [
     "apps/*",
